@@ -68,7 +68,8 @@ glimpse(df_titanic)
 ```{r q2-summary}
 ## NOTE: No need to edit! We'll cover how to
 ## do this calculation in a later exercise.
-df_titanic %>% summarize(total = sum(n))
+df_titanic %>% 
+  summarize(total = sum(n))
 ```
 
 **Observations**:
@@ -88,7 +89,8 @@ df_titanic %>% summarize(total = sum(n))
 
 ```{r q3-task}
 ## TASK: Visualize counts against `Class` and `Sex`
-df_titanic %>% filter(Survived == "Yes") %>%
+df_titanic %>% 
+  filter(Survived == "Yes") %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex) , position = "dodge")
 ```
@@ -113,7 +115,7 @@ The following code computes proportions within each `Class, Sex, Age` group.
 ## do this calculation in a later exercise.
 df_prop <-
   df_titanic %>%
-  group_by(Class, Sex) %>%
+  group_by(Class, Sex, Age) %>%
   mutate(
     Total = sum(n),
     Prop = n / Total
