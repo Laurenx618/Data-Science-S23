@@ -12,24 +12,28 @@ prerequisites:
 *Purpose*: Learning to do EDA well takes practice! In this challenge you'll further practice EDA by first completing a guided exploration, then by conducting your own investigation. This challenge will also give you a chance to use the wide variety of visual tools we've been learning.
 
 <!-- include-rubric -->
+
 # Grading Rubric
+
 <!-- -------------------------------------------------- -->
 
 Unlike exercises, **challenges will be graded**. The following rubrics define how you will be graded, both on an individual and team basis.
 
 ## Individual
+
 <!-- ------------------------- -->
 
-| Category | Needs Improvement | Satisfactory |
-|----------|----------------|--------------|
-| Effort | Some task __q__'s left unattempted | All task __q__'s attempted |
-| Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
-| Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
-| Assessed | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support |
-| Specified | Uses the phrase "more data are necessary" without clarification | Any statement that "more data are necessary" specifies which *specific* data are needed to answer what *specific* question |
-| Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability | Code sufficiently close to the [style guide](https://style.tidyverse.org/) |
+| Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
+|--------------|----------------------------|-------------------------------|
+| Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
+| Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
+| Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
+| Assessed    | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support      |
+| Specified   | Uses the phrase "more data are necessary" without clarification                                                  | Any statement that "more data are necessary" specifies which *specific* data are needed to answer what *specific* question |
+| Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability                                 | Code sufficiently close to the [style guide](https://style.tidyverse.org/)                                                 |
 
 ## Due Date
+
 <!-- ------------------------- -->
 
 All the deliverables stated in the rubrics above are due **at midnight** before the day of the class discussion of the challenge. See the [Syllabus](https://docs.google.com/document/d/1qeP6DUS8Djq_A0HMllMqsSqX3a9dbcx1/edit?usp=sharing&ouid=110386251748498665069&rtpof=true&sd=true) for more information.
@@ -40,36 +44,41 @@ library(gapminder)
 
 ```
 
-*Background*: [Gapminder](https://www.gapminder.org/about-gapminder/) is an
-independent organization that seeks to educate people about the state of the
-world. They seek to counteract the worldview constructed by a hype-driven media
-cycle, and promote a "fact-based worldview" by focusing on data. The dataset
-we'll study in this challenge is from Gapminder.
+*Background*: [Gapminder](https://www.gapminder.org/about-gapminder/) is an independent organization that seeks to educate people about the state of the world. They seek to counteract the worldview constructed by a hype-driven media cycle, and promote a "fact-based worldview" by focusing on data. The dataset we'll study in this challenge is from Gapminder.
 
 # Guided EDA
+
 <!-- -------------------------------------------------- -->
 
 First, we'll go through a round of *guided EDA*. Try to pay attention to the high-level process we're going through---after this guided round you'll be responsible for doing another cycle of EDA on your own!
 
-### __q0__ Perform your "first checks" on the dataset. What variables are in this
+### **q0** Perform your "first checks" on the dataset. What variables are in this
+
 dataset?
 
 ```{r q0-task}
 ## TASK: Do your "first checks" here!
+glimpse(gapminder)
 ```
 
 **Observations**:
 
-- Write all variable names here
+-   country, continent, year, lifeExp, pop, gdpPercap
 
-### __q1__ Determine the most and least recent years in the `gapminder` dataset.
+### **q1** Determine the most and least recent years in the `gapminder` dataset.
 
 *Hint*: Use the `pull()` function to get a vector out of a tibble. (Rather than the `$` notation of base R.)
 
 ```{r q1-task}
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
-year_max <- NA_real_
-year_min <- NA_real_
+year_max <- 2007
+year_min <- 1952
+
+gapminder %>% 
+  pull(year) %>%
+  min()
+
+  # year_max <- max(sub_year, na.rm = TRUE)
 ```
 
 Use the following test to check your work.
@@ -89,32 +98,47 @@ if (is_tibble(year_max)) {
 print("Nice!")
 ```
 
-### __q2__ Filter on years matching `year_min`, and make a plot of the GDP per capita against continent. Choose an appropriate `geom_` to visualize the data. What observations can you make?
+### **q2** Filter on years matching `year_min`, and make a plot of the GDP per capita against continent. Choose an appropriate `geom_` to visualize the data. What observations can you make?
 
 You may encounter difficulties in visualizing these data; if so document your challenges and attempt to produce the most informative visual you can.
 
 ```{r q2-task}
 ## TASK: Create a visual of gdpPercap vs continent
+gapminder %>%
+  filter(year == year_min) %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = continent, y = gdpPercap) , position = "dodge") +
+  ylab("GDP per Capita") +
+  xlab("Continent") +
+  ggtitle("GPD per Capita of Each Continent")
 ```
 
 **Observations**:
 
-- Write your observations here
+-   In 1952, Asia has a GDP per capita that is significantly (a couple times) higher than other continents.
 
 **Difficulties & Approaches**:
 
-- Write your challenges and your approach to solving them
+-   Write your challenges and your approach to solving them
 
-### __q3__ You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
+### **q3** You should have found *at least* three outliers in q2 (but possibly many more!). Identify those outliers (figure out which countries they are).
 
 ```{r q3-task}
 ## TASK: Identify the outliers from q2
+gapminder %>%
+  filter(continent == "Asia") %>%
+  ggplot() + 
+  geom_point(mapping = aes(x = country, y = gdpPercap, color = year), position = "dodge") +
+  ylab("GDP per Capita") +
+  xlab("Country") +
+  guides(x =  guide_axis(angle = 90)) +
+  ggtitle("GPD per Capita of Each Country")
 ```
 
 **Observations**:
 
-- Identify the outlier countries from q2
-  - (Your response here)
+-   Identify the outlier countries from q2
+    -   Kuwait, Afghanistan, Bangladesh, Myanmar, and Nepal.
 
 *Hint*: For the next task, it's helpful to know a ggplot trick we'll learn in an upcoming exercise: You can use the `data` argument inside any `geom_*` to modify the data that will be plotted *by that geom only*. For instance, you can use this trick to filter a set of points to label:
 
@@ -132,39 +156,138 @@ gapminder %>%
   )
 ```
 
-### __q4__ Create a plot similar to yours from q2 studying both `year_min` and `year_max`. Find a way to highlight the outliers from q3 on your plot *in a way that lets you identify which country is which*. Compare the patterns between `year_min` and `year_max`.
+### **q4** Create a plot similar to yours from q2 studying both `year_min` and `year_max`. Find a way to highlight the outliers from q3 on your plot *in a way that lets you identify which country is which*. Compare the patterns between `year_min` and `year_max`.
 
 *Hint*: We've learned a lot of different ways to show multiple variables; think about using different aesthetics or facets.
 
 ```{r q4-task}
 ## TASK: Create a visual of gdpPercap vs continent
+gapminder %>%
+  filter(year == min(year)) %>%
+  ggplot(aes(continent, gdpPercap)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("Kuwait", "United States", "Nepal")),
+    mapping = aes(color = country),
+    size = 2
+  )
+  
+gapminder %>%
+  filter(year == max(year)) %>%
+  ggplot(aes(continent, gdpPercap)) +
+  geom_boxplot() +
+  geom_point(
+    data = . %>% filter(country %in% c("Kuwait", "United States", "Nepal")),
+    mapping = aes(color = country),
+    size = 2
+  )
 ```
 
 **Observations**:
 
-- Write your observations here
+-   In 1952, Kuwait had an extremely high GDP per capita value compared to all the other countries in the world. The United States has the highest GDP per capita among other countries in Americas. Nepal was one of the countries that had the lowest GDP per capita among other countries in Asia.
+-   The range of GDP per capita is much larger compared to what we see in the plots of 1952, which potentially stands for a widened gap between relatively rich and poor countries over time. In Kuwait, the GPD per capita reduced by almost half, while the other two outliers that we identified in the 1952 graphs both shifted further away from the mean value of their continents.
 
 # Your Own EDA
+
 <!-- -------------------------------------------------- -->
 
 Now it's your turn! We just went through guided EDA considering the GDP per capita at two time points. You can continue looking at outliers, consider different years, repeat the exercise with `lifeExp`, consider the relationship between variables, or something else entirely.
 
-### __q5__ Create *at least* three new figures below. With each figure, try to pose new questions about the data.
+### **q5** Create *at least* three new figures below. With each figure, try to pose new questions about the data.
 
 ```{r q5-task1}
 ## TASK: Your first graph
+gapminder %>%
+  ggplot() + 
+    geom_line(aes(x = gdpPercap, y = lifeExp))
 ```
 
-- (Your notes and observations here)
+-   (Your notes and observations here)
 
 ```{r q5-task2}
+library(patchwork) 
 ## TASK: Your second graph
+Kuwait <- gapminder %>%
+  filter(country == "Kuwait")
+Kuwait
+  
+Asia_means <- gapminder %>% 
+  filter(continent == "Asia") %>% 
+  group_by(year) %>%
+  summarize(
+    mean_gdp = mean(gdpPercap), 
+    mean_pop = mean(pop),
+    mean_exp = mean(lifeExp)
+    ) 
+Asia_means
+
+world_means <- gapminder %>% 
+  group_by(year) %>%
+  summarize(
+    mean_gdp = mean(gdpPercap), 
+    mean_pop = mean(pop),
+    mean_exp = mean(lifeExp)
+    )
+world_means
+
+legend_colors <- c("Kuwait" = "blue", "Asian" = "red", "World" = "orange")
+
+# creating point plots of means
+p1 <- ggplot() + 
+  geom_line(data = Kuwait, aes(x = year, y = lifeExp, color = "Kuwait")) +
+  geom_line(data = Asia_means, aes(x = year, y = mean_exp, color = "Asian")) +
+  geom_line(data = world_means, aes(x = year, y = mean_exp, color = "World")) +
+  ylab("Life Expectancy") +
+  labs(color = "Region") + 
+  scale_color_manual(values = legend_colors) + 
+  guides(x =  guide_axis(angle = 90)) +
+  theme_bw()
+
+p2 <- ggplot() +
+  geom_line(data = Kuwait, aes(x = year, y = pop), color = "blue") +
+  geom_line(data = Asia_means, aes(x = year, y = mean_pop), color = "red") +
+  geom_line(data = world_means, aes(x = year, y = mean_pop), color = "orange") +
+  ylab("Population") +
+  guides(x =  guide_axis(angle = 90)) +
+  theme_bw()
+
+p3 <- ggplot() +
+  geom_line(data = Kuwait, aes(x = year, y = gdpPercap), color = "blue") +
+  geom_line(data = Asia_means, aes(x = year, y = mean_gdp), color = "red") +
+  geom_line(data = world_means, aes(x = year, y = mean_gdp), color = "orange") +
+  guides(x =  guide_axis(angle = 90)) +
+  ylab("GDP per Capita")
+
+
+p2 + p3 + p1
 ```
 
-- (Your notes and observations here)
+-   (Your notes and observations here)
 
 ```{r q5-task3}
 ## TASK: Your third graph
+# country, continent, year, lifeExp, pop, gdpPercap
+
+coef <- 20
+legend_colors <- c("Kuwait" = "red", "Asian" = "blue", "World" = "orange")
+
+gapminder %>%
+  filter(country == "Kuwait") %>%
+  
+  ggplot() + 
+    geom_line(aes(x = year, y = gdpPercap, color = "blue"))+
+    geom_line(aes(x = year, y = pop/coef, color = "red"))
+    
+    # Custom the Y scales:
+    scale_y_continuous(
+      
+      # Features of the first axis
+      name = "GDP Per Capita",
+      
+      # Add a second axis and specify its features
+      sec.axis = sec_axis( trans = ~.*coef, name = "Population (red)")
+    )
 ```
 
-- (Your notes and observations here)
+-   (Your notes and observations here)
