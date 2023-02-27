@@ -331,12 +331,15 @@ the relationship between variables, or something else entirely.
 ## TASK: Your first graph
 gapminder %>%
   ggplot() + 
-    geom_line(aes(x = gdpPercap, y = lifeExp))
+    geom_point(aes(x = gdpPercap, y = lifeExp, color = continent))
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q5-task1-1.png)<!-- -->
 
-- (Your notes and observations here)
+- The relationship between life expectancy and GDP per capita seems to
+  be exponential.
+- Among all the continents, Asia has very obvious outliers with very
+  high GDP per capita values and fairly low life expectancies.
 
 ``` r
 library(patchwork) 
@@ -452,7 +455,19 @@ p2 + p3 + p1
 
 ![](c04-gapminder-assignment_files/figure-gfm/q5-task2-1.png)<!-- -->
 
-- (Your notes and observations here)
+- In the first graph of population over time, we can see that Kuwait’s
+  population growth trend generally lines up with that in Asia and over
+  the world.
+- In the second graph of GDP per capita over time, Kuwait’s data is
+  pretty inconsistent compared to Asia and all over the world. It
+  started at a very high value which is approximately 10 times greater
+  than the average of Asia and the world, while it experienced abrupt
+  decreases from 1957 to 1967 and from 1972 to 1982. The average GDP per
+  capita of Asia and the world share a similar trend that increases
+  gradually over time.
+- The average life expectancy of Asia exceeded that of the world in
+  1977, while Kuwait has a much higher value than both from the
+  beginning to the end.
 
 ``` r
 ## TASK: Your third graph
@@ -465,13 +480,9 @@ gapminder %>%
   filter(country == "Kuwait") %>%
   
   ggplot() + 
-    geom_line(aes(x = year, y = gdpPercap, color = "blue"))+
-    geom_line(aes(x = year, y = pop/coef, color = "red"))
-```
-
-![](c04-gapminder-assignment_files/figure-gfm/q5-task3-1.png)<!-- -->
-
-``` r
+    geom_line(aes(x = year, y = gdpPercap), color = "blue") +
+    geom_line(aes(x = year, y = pop/coef), color = "red") +
+    
     # Custom the Y scales:
     scale_y_continuous(
       
@@ -479,12 +490,19 @@ gapminder %>%
       name = "GDP Per Capita",
       
       # Add a second axis and specify its features
-      sec.axis = sec_axis( trans = ~.*coef, name = "Population (red)")
-    )
+      sec.axis = sec_axis( trans = ~.*coef, name = "Population")
+    ) +
+  theme(
+    axis.title.y = element_text(color = "blue", size=13),
+    axis.title.y.right = element_text(color = "red", size=13)
+  ) 
 ```
 
-    ## <ScaleContinuousPosition>
-    ##  Range:  
-    ##  Limits:    0 --    1
+![](c04-gapminder-assignment_files/figure-gfm/q5-task3-1.png)<!-- -->
 
-- (Your notes and observations here)
+- GDP per capita is calculated from the GDP of the country divided by
+  its population. This graph shows that the population of Kuwait by
+  almost 10 times from 1952 to 2007, while its GDP per capita dropped by
+  more than half over the same time length. This somehow makes sense and
+  proves the point that GDP per capita is inversely proportional to the
+  population of the same country.
