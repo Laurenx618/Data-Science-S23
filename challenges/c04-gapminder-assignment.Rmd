@@ -24,7 +24,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|--------------|----------------------------|-------------------------------|
+|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -96,6 +96,10 @@ if (is_tibble(year_max)) {
 }
 
 print("Nice!")
+
+gapminder %>%
+  filter(year == "1952", country == "Kuwait") %>%
+  pull(pop) 
 ```
 
 ### **q2** Filter on years matching `year_min`, and make a plot of the GDP per capita against continent. Choose an appropriate `geom_` to visualize the data. What observations can you make?
@@ -218,7 +222,7 @@ Asia_means <- gapminder %>%
   group_by(year) %>%
   summarize(
     mean_gdp = mean(gdpPercap), 
-    mean_pop = mean(pop),
+    sum_pop = sum(pop)/1395357351,
     mean_exp = mean(lifeExp)
     ) 
 Asia_means
@@ -227,18 +231,18 @@ world_means <- gapminder %>%
   group_by(year) %>%
   summarize(
     mean_gdp = mean(gdpPercap), 
-    mean_pop = mean(pop),
+    sum_pop = sum(pop)/2406957150,
     mean_exp = mean(lifeExp)
     )
 world_means
 
-legend_colors <- c("Kuwait" = "blue", "Asian" = "red", "World" = "orange")
+legend_colors <- c("Kuwait" = "blue", "Asia mean" = "red", "World mean" = "orange")
 
 # creating point plots of means
 p1 <- ggplot() + 
   geom_line(data = Kuwait, aes(x = year, y = lifeExp, color = "Kuwait")) +
-  geom_line(data = Asia_means, aes(x = year, y = mean_exp, color = "Asian")) +
-  geom_line(data = world_means, aes(x = year, y = mean_exp, color = "World")) +
+  geom_line(data = Asia_means, aes(x = year, y = mean_exp, color = "Asia mean")) +
+  geom_line(data = world_means, aes(x = year, y = mean_exp, color = "World mean")) +
   ylab("Life Expectancy") +
   labs(color = "Region") + 
   scale_color_manual(values = legend_colors) + 
@@ -246,10 +250,10 @@ p1 <- ggplot() +
   theme_bw()
 
 p2 <- ggplot() +
-  geom_line(data = Kuwait, aes(x = year, y = pop), color = "blue") +
-  geom_line(data = Asia_means, aes(x = year, y = mean_pop), color = "red") +
-  geom_line(data = world_means, aes(x = year, y = mean_pop), color = "orange") +
-  ylab("Population") +
+  geom_line(data = Kuwait, aes(x = year, y = pop/160000), color = "blue") +
+  geom_line(data = Asia_means, aes(x = year, y = sum_pop), color = "red") +
+  geom_line(data = world_means, aes(x = year, y = sum_pop), color = "orange") +
+  ylab("Sum of Population (Compared to 1952)") +
   guides(x =  guide_axis(angle = 90)) +
   theme_bw()
 
