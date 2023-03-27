@@ -225,53 +225,43 @@ set will estimate the probability of points landing in that area (see
 
 ``` r
 ## TASK: Choose a sample size and generate samples
-n <- 100 # Choose a sample size
-df_q1 <- tibble(x = seq(0, 1, length.out = 100)) %>%
-  mutate(y = sqrt(1 - x^2), stat = x^2 + y^2)
+n <- 500000 # Choose a sample size
+
+df_q1 <- tibble(x = runif(n, min = 0, max = 1)) %>%
+  mutate(y = runif(n, min = 0, max = 1), stat = (sqrt(x^2 + y^2) <= 1) * 4)
 df_q1
 ```
 
-    ## # A tibble: 100 × 3
-    ##         x     y  stat
-    ##     <dbl> <dbl> <dbl>
-    ##  1 0      1         1
-    ##  2 0.0101 1.00      1
-    ##  3 0.0202 1.00      1
-    ##  4 0.0303 1.00      1
-    ##  5 0.0404 0.999     1
-    ##  6 0.0505 0.999     1
-    ##  7 0.0606 0.998     1
-    ##  8 0.0707 0.997     1
-    ##  9 0.0808 0.997     1
-    ## 10 0.0909 0.996     1
-    ## # … with 90 more rows
+    ## # A tibble: 500,000 × 3
+    ##         x      y  stat
+    ##     <dbl>  <dbl> <dbl>
+    ##  1 0.697  0.847      0
+    ##  2 0.717  0.823      0
+    ##  3 0.899  0.0944     4
+    ##  4 0.627  0.615      4
+    ##  5 0.912  0.626      0
+    ##  6 0.640  0.149      4
+    ##  7 0.662  0.180      4
+    ##  8 0.103  0.797      4
+    ##  9 0.0475 0.516      4
+    ## 10 0.252  0.526      4
+    ## # … with 499,990 more rows
     ## # ℹ Use `print(n = ...)` to see more rows
+
+``` r
+# pi/4 = (x^2 + y^2) <= 1)
+```
 
 ### **q2** Using your data in `df_q1`, estimate ![\pi](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cpi "\pi").
 
 ``` r
 ## TASK: Estimate pi using your data from q1
-pi_est <- df_q1 %>%
-  mutate(pi = mean(stat))
+pi_est <- mean(df_q1$stat)
   
 pi_est
 ```
 
-    ## # A tibble: 100 × 4
-    ##         x     y  stat    pi
-    ##     <dbl> <dbl> <dbl> <dbl>
-    ##  1 0      1         1     1
-    ##  2 0.0101 1.00      1     1
-    ##  3 0.0202 1.00      1     1
-    ##  4 0.0303 1.00      1     1
-    ##  5 0.0404 0.999     1     1
-    ##  6 0.0505 0.999     1     1
-    ##  7 0.0606 0.998     1     1
-    ##  8 0.0707 0.997     1     1
-    ##  9 0.0808 0.997     1     1
-    ## 10 0.0909 0.996     1     1
-    ## # … with 90 more rows
-    ## # ℹ Use `print(n = ...)` to see more rows
+    ## [1] 3.141064
 
 # Quantifying Uncertainty
 
@@ -288,24 +278,33 @@ estimate.
 ### **q3** Using a CLT approximation, produce a confidence interval for your estimate of ![\pi](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cpi "\pi"). Make sure you specify your confidence level. Does your interval include the true value of ![\pi](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cpi "\pi")? Was your chosen sample size sufficiently large so as to produce a trustworthy answer?
 
 ``` r
-pi_est %>%
+n <- 500000
+q95 <- qnorm( 1 - (1 - 0.95) / 2 )
+mean <- pi_est
+
+df_q1 %>%
   mutate(
-    mean = mean(pi),
-    sd = sd(pi),
-    se = sd / sqrt(100),
-    lo = mean - (1-0.95)/2 * se,
-    hi = mean + (1-0.95)/2 * se
+    sd = sd(stat),
+    se = sd / sqrt(n),
+    lo = mean - q95 * se,
+    hi = mean + q95 * se,
+    sample_size = n
   ) %>%
-  ggplot(aes(x)) +
-  geom_hline(yintercept = 0.5, linetype = 2) +
+  ggplot(aes(x = sample_size)) +
+  geom_hline(yintercept = pi, linetype = 2) +
   geom_errorbar(aes(
     ymin = lo,
     ymax = hi,
-    color = (lo <= 0.5) & (0.5 <= hi)
+    color = (lo <= pi) & (mean <= pi)
   )) +
-  facet_grid(100~.) +
+  geom_point(aes(x = sample_size, y = mean)) +
+  facet_grid(1~.) +
   scale_color_discrete(name = "CI Contains True Mean") +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  labs(
+    x = "Replication",
+    y = "Estimated Mean"
+  )
 ```
 
 ![](c07-monte-carlo-assignment_files/figure-gfm/q3-task-1.png)<!-- -->
@@ -314,13 +313,16 @@ pi_est %>%
 
 - Does your interval include the true value of
   ![\pi](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cpi "\pi")?
-  - (Your response here)
+  - Yes!
 - What confidence level did you choose?
-  - (Your response here)
+  - The confidence level that I chose was 0.95.
 - Was your sample size
   ![n](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n "n")
   large enough? Why do you say that?
-  - (Your response here)
+  - My sample size (500,000) is large enough to produce a value which
+    can be applied in most disciplines, because the entire confidence
+    interval lies from roughly 3.1372 to 3.1462 with a accuracy to 2
+    significant figures.
 
 # References
 
