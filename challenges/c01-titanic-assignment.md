@@ -130,7 +130,8 @@ glimpse(df_titanic)
 ``` r
 ## NOTE: No need to edit! We'll cover how to
 ## do this calculation in a later exercise.
-df_titanic %>% summarize(total = sum(n))
+df_titanic %>% 
+  summarize(total = sum(n))
 ```
 
     ## # A tibble: 1 × 1
@@ -160,7 +161,8 @@ df_titanic %>% summarize(total = sum(n))
 
 ``` r
 ## TASK: Visualize counts against `Class` and `Sex`
-df_titanic %>% filter(Survived == "Yes") %>%
+df_titanic %>% 
+  filter(Survived == "Yes") %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = n, fill = Sex) , position = "dodge")
 ```
@@ -196,7 +198,7 @@ group.
 ## do this calculation in a later exercise.
 df_prop <-
   df_titanic %>%
-  group_by(Class, Sex) %>%
+  group_by(Class, Sex, Age) %>%
   mutate(
     Total = sum(n),
     Prop = n / Total
@@ -206,18 +208,18 @@ df_prop
 ```
 
     ## # A tibble: 32 × 7
-    ##    Class Sex    Age   Survived     n Total   Prop
-    ##    <chr> <chr>  <chr> <chr>    <dbl> <dbl>  <dbl>
-    ##  1 1st   Male   Child No           0   180 0     
-    ##  2 2nd   Male   Child No           0   179 0     
-    ##  3 3rd   Male   Child No          35   510 0.0686
-    ##  4 Crew  Male   Child No           0   862 0     
-    ##  5 1st   Female Child No           0   145 0     
-    ##  6 2nd   Female Child No           0   106 0     
-    ##  7 3rd   Female Child No          17   196 0.0867
-    ##  8 Crew  Female Child No           0    23 0     
-    ##  9 1st   Male   Adult No         118   180 0.656 
-    ## 10 2nd   Male   Adult No         154   179 0.860 
+    ##    Class Sex    Age   Survived     n Total    Prop
+    ##    <chr> <chr>  <chr> <chr>    <dbl> <dbl>   <dbl>
+    ##  1 1st   Male   Child No           0     5   0    
+    ##  2 2nd   Male   Child No           0    11   0    
+    ##  3 3rd   Male   Child No          35    48   0.729
+    ##  4 Crew  Male   Child No           0     0 NaN    
+    ##  5 1st   Female Child No           0     1   0    
+    ##  6 2nd   Female Child No           0    13   0    
+    ##  7 3rd   Female Child No          17    31   0.548
+    ##  8 Crew  Female Child No           0     0 NaN    
+    ##  9 1st   Male   Adult No         118   175   0.674
+    ## 10 2nd   Male   Adult No         154   168   0.917
     ## # … with 22 more rows
     ## # ℹ Use `print(n = ...)` to see more rows
 
@@ -229,6 +231,8 @@ df_prop %>%
   ggplot() +
   geom_col(mapping = aes(x = Class, y = Prop, fill = Sex), position = "dodge")
 ```
+
+    ## Warning: Removed 2 rows containing missing values (geom_col).
 
 ![](c01-titanic-assignment_files/figure-gfm/q4-task-1.png)<!-- -->
 
@@ -264,6 +268,8 @@ df_prop %>% filter(Survived == "Yes") %>%
   geom_col(mapping = aes(x = Class, y = Prop, fill = Sex) , position = "dodge") +
   facet_wrap(~ Age)
 ```
+
+    ## Warning: Removed 2 rows containing missing values (geom_col).
 
 ![](c01-titanic-assignment_files/figure-gfm/q5-task-1.png)<!-- -->
 
