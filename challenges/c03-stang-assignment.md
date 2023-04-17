@@ -247,13 +247,32 @@ print("Very good!")
 ### **q2** Perform a basic EDA on the aluminum data *without visualization*. Use your analysis to answer the questions under *observations* below. In addition, add your own *specific* question that you’d like to answer about the data—you’ll answer it below in q3.
 
 ``` r
-##
+distinct(df_stang_long, thick)
 ```
+
+    ## # A tibble: 4 × 1
+    ##   thick
+    ##   <dbl>
+    ## 1 0.022
+    ## 2 0.032
+    ## 3 0.064
+    ## 4 0.081
+
+``` r
+distinct(df_stang_long, angle, .keep_all = TRUE)
+```
+
+    ## # A tibble: 3 × 5
+    ##   thick alloy   angle     E    nu
+    ##   <dbl> <chr>   <int> <dbl> <dbl>
+    ## 1 0.022 al_24st     0 10600 0.321
+    ## 2 0.022 al_24st    45 10700 0.329
+    ## 3 0.022 al_24st    90 10500 0.31
 
 **Observations**:
 
 - Is there “one true value” for the material properties of Aluminum?
-  - No, there is not. The material properties of Aluminium
+  - No, there is not.
 - How many aluminum alloys are in this dataset? How do you know?
   - There is one type of aluminium alloy in this dataset, because under
     the “alloy” column all the samples have the same value of “al_24st”.
@@ -300,7 +319,13 @@ amount of the material.”\[2\]
 Note that the “amount of material” would vary with the thickness of a
 tested plate. Does the following graph support or contradict the claim
 that “elasticity `E` is an intensive material property.” Why or why not?
-Is this evidence *conclusive* one way or another? Why or why not?
+Is this evidence *conclusive* one way or another? Why or why not?  
+- The following graph contradicts with the claim that “elasticity E is
+an intensive material property,” because the elasticity of the material
+increases as the amount of it increases.  
+- This evidence is not conclusive, because the total number of test
+being done for the experiment is not sufficient to make the conclusion
+significant enough.
 
 ``` r
 ## NOTE: No need to change; run this chunk
