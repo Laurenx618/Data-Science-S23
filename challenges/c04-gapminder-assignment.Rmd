@@ -24,7 +24,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -71,14 +71,13 @@ glimpse(gapminder)
 
 ```{r q1-task}
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
-year_max <- 2007
-year_min <- 1952
-
-gapminder %>% 
+year_max <- gapminder %>% 
+  pull(year) %>%
+  max()
+  
+year_min <- gapminder %>% 
   pull(year) %>%
   min()
-
-  # year_max <- max(sub_year, na.rm = TRUE)
 ```
 
 Use the following test to check your work.
@@ -111,7 +110,7 @@ You may encounter difficulties in visualizing these data; if so document your ch
 gapminder %>%
   filter(year == year_min) %>%
   ggplot() + 
-  geom_col(mapping = aes(x = continent, y = gdpPercap) , position = "dodge") +
+  geom_boxplot(mapping = aes(x = continent, y = gdpPercap)) +
   ylab("GDP per Capita") +
   xlab("Continent") +
   ggtitle("GPD per Capita of Each Continent")
@@ -129,10 +128,12 @@ gapminder %>%
 
 ```{r q3-task}
 ## TASK: Identify the outliers from q2
-gapminder %>%
-  filter(continent == "Asia") %>%
-  ggplot() + 
-  geom_point(mapping = aes(x = country, y = gdpPercap, color = year), position = "dodge") +
+df_q3 <- gapminder %>%
+  filter(year == year_min) %>%
+  arrange(desc(gdpPercap))
+
+ggplot(df_q3[1:10, ]) + 
+  geom_point(mapping = aes(x = rev(reorder(country, gdpPercap)), y = gdpPercap)) +
   ylab("GDP per Capita") +
   xlab("Country") +
   guides(x =  guide_axis(angle = 90)) +
@@ -142,7 +143,7 @@ gapminder %>%
 **Observations**:
 
 -   Identify the outlier countries from q2
-    -   Kuwait, Afghanistan, Bangladesh, Myanmar, and Nepal.
+    -   Denmark, Bahrain, United Kingdom and Australia.
 
 *Hint*: For the next task, it's helpful to know a ggplot trick we'll learn in an upcoming exercise: You can use the `data` argument inside any `geom_*` to modify the data that will be plotted *by that geom only*. For instance, you can use this trick to filter a set of points to label:
 

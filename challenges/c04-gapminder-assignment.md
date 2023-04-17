@@ -143,18 +143,13 @@ glimpse(gapminder)
 
 ``` r
 ## TASK: Find the largest and smallest values of `year` in `gapminder`
-year_max <- 2007
-year_min <- 1952
-
-gapminder %>% 
+year_max <- gapminder %>% 
+  pull(year) %>%
+  max()
+  
+year_min <- gapminder %>% 
   pull(year) %>%
   min()
-```
-
-    ## [1] 1952
-
-``` r
-  # year_max <- max(sub_year, na.rm = TRUE)
 ```
 
 Use the following test to check your work.
@@ -195,6 +190,14 @@ print("Nice!")
 
     ## [1] "Nice!"
 
+``` r
+gapminder %>%
+  filter(year == "1952", country == "Kuwait") %>%
+  pull(pop) 
+```
+
+    ## [1] 160000
+
 ### **q2** Filter on years matching `year_min`, and make a plot of the GDP per capita against continent. Choose an appropriate `geom_` to visualize the data. What observations can you make?
 
 You may encounter difficulties in visualizing these data; if so document
@@ -206,7 +209,7 @@ can.
 gapminder %>%
   filter(year == year_min) %>%
   ggplot() + 
-  geom_col(mapping = aes(x = continent, y = gdpPercap) , position = "dodge") +
+  geom_boxplot(mapping = aes(x = continent, y = gdpPercap)) +
   ylab("GDP per Capita") +
   xlab("Continent") +
   ggtitle("GPD per Capita of Each Continent")
@@ -227,24 +230,24 @@ gapminder %>%
 
 ``` r
 ## TASK: Identify the outliers from q2
-gapminder %>%
-  filter(continent == "Asia") %>%
-  ggplot() + 
-  geom_point(mapping = aes(x = country, y = gdpPercap, color = year), position = "dodge") +
+df_q3 <- gapminder %>%
+  filter(year == year_min) %>%
+  arrange(desc(gdpPercap))
+
+ggplot(df_q3[1:10, ]) + 
+  geom_point(mapping = aes(x = rev(reorder(country, gdpPercap)), y = gdpPercap)) +
   ylab("GDP per Capita") +
   xlab("Country") +
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("GPD per Capita of Each Country")
 ```
 
-    ## Warning: Width not defined. Set with `position_dodge(width = ?)`
-
 ![](c04-gapminder-assignment_files/figure-gfm/q3-task-1.png)<!-- -->
 
 **Observations**:
 
 - Identify the outlier countries from q2
-  - Kuwait, Afghanistan, Bangladesh, Myanmar, and Nepal.
+  - Denmark, Bahrain, United Kingdom and Australia.
 
 *Hint*: For the next task, it’s helpful to know a ggplot trick we’ll
 learn in an upcoming exercise: You can use the `data` argument inside
@@ -371,63 +374,63 @@ Asia_means <- gapminder %>%
   group_by(year) %>%
   summarize(
     mean_gdp = mean(gdpPercap), 
-    mean_pop = mean(pop),
+    sum_pop = sum(pop)/1395357351,
     mean_exp = mean(lifeExp)
     ) 
 Asia_means
 ```
 
     ## # A tibble: 12 × 4
-    ##     year mean_gdp   mean_pop mean_exp
-    ##    <int>    <dbl>      <dbl>    <dbl>
-    ##  1  1952    5195.  42283556.     46.3
-    ##  2  1957    5788.  47356988.     49.3
-    ##  3  1962    5729.  51404763.     51.6
-    ##  4  1967    5971.  57747361.     54.7
-    ##  5  1972    8187.  65180977.     57.3
-    ##  6  1977    7791.  72257987.     59.6
-    ##  7  1982    7434.  79095018.     62.6
-    ##  8  1987    7608.  87006690.     64.9
-    ##  9  1992    8640.  94948248.     66.5
-    ## 10  1997    9834. 102523803.     68.0
-    ## 11  2002   10174. 109145521.     69.2
-    ## 12  2007   12473. 115513752.     70.7
+    ##     year mean_gdp sum_pop mean_exp
+    ##    <int>    <dbl>   <dbl>    <dbl>
+    ##  1  1952    5195.    1        46.3
+    ##  2  1957    5788.    1.12     49.3
+    ##  3  1962    5729.    1.22     51.6
+    ##  4  1967    5971.    1.37     54.7
+    ##  5  1972    8187.    1.54     57.3
+    ##  6  1977    7791.    1.71     59.6
+    ##  7  1982    7434.    1.87     62.6
+    ##  8  1987    7608.    2.06     64.9
+    ##  9  1992    8640.    2.25     66.5
+    ## 10  1997    9834.    2.42     68.0
+    ## 11  2002   10174.    2.58     69.2
+    ## 12  2007   12473.    2.73     70.7
 
 ``` r
 world_means <- gapminder %>% 
   group_by(year) %>%
   summarize(
     mean_gdp = mean(gdpPercap), 
-    mean_pop = mean(pop),
+    sum_pop = sum(pop)/2406957150,
     mean_exp = mean(lifeExp)
     )
 world_means
 ```
 
     ## # A tibble: 12 × 4
-    ##     year mean_gdp  mean_pop mean_exp
-    ##    <int>    <dbl>     <dbl>    <dbl>
-    ##  1  1952    3725. 16950402.     49.1
-    ##  2  1957    4299. 18763413.     51.5
-    ##  3  1962    4726. 20421007.     53.6
-    ##  4  1967    5484. 22658298.     55.7
-    ##  5  1972    6770. 25189980.     57.6
-    ##  6  1977    7313. 27676379.     59.6
-    ##  7  1982    7519. 30207302.     61.5
-    ##  8  1987    7901. 33038573.     63.2
-    ##  9  1992    8159. 35990917.     64.2
-    ## 10  1997    9090. 38839468.     65.0
-    ## 11  2002    9918. 41457589.     65.7
-    ## 12  2007   11680. 44021220.     67.0
+    ##     year mean_gdp sum_pop mean_exp
+    ##    <int>    <dbl>   <dbl>    <dbl>
+    ##  1  1952    3725.    1        49.1
+    ##  2  1957    4299.    1.11     51.5
+    ##  3  1962    4726.    1.20     53.6
+    ##  4  1967    5484.    1.34     55.7
+    ##  5  1972    6770.    1.49     57.6
+    ##  6  1977    7313.    1.63     59.6
+    ##  7  1982    7519.    1.78     61.5
+    ##  8  1987    7901.    1.95     63.2
+    ##  9  1992    8159.    2.12     64.2
+    ## 10  1997    9090.    2.29     65.0
+    ## 11  2002    9918.    2.45     65.7
+    ## 12  2007   11680.    2.60     67.0
 
 ``` r
-legend_colors <- c("Kuwait" = "blue", "Asian" = "red", "World" = "orange")
+legend_colors <- c("Kuwait" = "blue", "Asia mean" = "red", "World mean" = "orange")
 
 # creating point plots of means
 p1 <- ggplot() + 
   geom_line(data = Kuwait, aes(x = year, y = lifeExp, color = "Kuwait")) +
-  geom_line(data = Asia_means, aes(x = year, y = mean_exp, color = "Asian")) +
-  geom_line(data = world_means, aes(x = year, y = mean_exp, color = "World")) +
+  geom_line(data = Asia_means, aes(x = year, y = mean_exp, color = "Asia mean")) +
+  geom_line(data = world_means, aes(x = year, y = mean_exp, color = "World mean")) +
   ylab("Life Expectancy") +
   labs(color = "Region") + 
   scale_color_manual(values = legend_colors) + 
@@ -435,10 +438,10 @@ p1 <- ggplot() +
   theme_bw()
 
 p2 <- ggplot() +
-  geom_line(data = Kuwait, aes(x = year, y = pop), color = "blue") +
-  geom_line(data = Asia_means, aes(x = year, y = mean_pop), color = "red") +
-  geom_line(data = world_means, aes(x = year, y = mean_pop), color = "orange") +
-  ylab("Population") +
+  geom_line(data = Kuwait, aes(x = year, y = pop/160000), color = "blue") +
+  geom_line(data = Asia_means, aes(x = year, y = sum_pop), color = "red") +
+  geom_line(data = world_means, aes(x = year, y = sum_pop), color = "orange") +
+  ylab("Sum of Population (Compared to 1952)") +
   guides(x =  guide_axis(angle = 90)) +
   theme_bw()
 
