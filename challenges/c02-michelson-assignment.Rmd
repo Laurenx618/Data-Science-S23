@@ -35,7 +35,7 @@ define how you will be graded, both on an individual and team basis.
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -112,18 +112,27 @@ df_michelson %>% glimpse
 ```{r q1-task}
 ## TODO: Compute summaries
 df_q1 <- df_michelson %>%
-  mutate(n = n_distinct(Distinctness))%>%
   group_by(Distinctness) %>%
-  summarise(MeanVelocity = mean(Velocity))
+  summarise(
+    n = n(), 
+    MeanVelocity = mean(Velocity)
+  )
 
 df_q1 %>%
 arrange(desc(Distinctness)) %>%
 knitr::kable()
 ```
 
-**Observations**: - Write your observations here! - (Your response
-here) - Why might your table differ from Michelson's? - (Your response
-here)
+**Observations**:
+
+The mean velocity tends to be higher when the distinctness increases
+from 1 to 3. This means that the mean of measured velocity increases as
+the distinctness of the pictures gets better.
+
+\- Why might your table differ from Michelson's? \
+I think that's because the values in my table have a precision of 7
+significant figures, while the values in the table above (Michelson's
+table) have a precision of 5 significant numbers.
 
 The `Velocity` values in the dataset are the speed of light *in air*;
 Michelson introduced a couple of adjustments to estimate the speed of
@@ -262,14 +271,18 @@ df_q2 %>%
 
 Similarities
 
--   Both plots share a similar trend overall.
+-   Both plots share a similar trend overall. More specifically, their
+    peaks are all roughly appear during the same time (over the x-axis),
+    and their velocity values generally fall into the same range between
+    299900 and 300000 m/s.
 
 Differences
 
--   The first couple of days of the real data has a wider range as well
-    as more outlet points than Michelson's simulated data, while the
-    latter has more outlet points than the real data over the last
-    couple of days.
+-   The first couple of days of the real data has more data points whose
+    velocities goes beyond the range of of 299900-300000 m/s compared to
+    Michelson's simulated data, while over the last couple of days the
+    real data has more data points that lies beyond the range compared
+    to the Michelson's simulated data.
 
 ### **q5** You have access to a few other variables. Construct a few visualizations of `VelocityVacuum` against these other factors. Are there other patterns in the data that might help explain the difference between Michelson's estimate and `LIGHTSPEED_VACUUM`?
 
@@ -285,52 +298,48 @@ v_sd <-
 
 ## Visualize
 set.seed(101)
-df_q2 %>%
+df_q5 <- df_q2 %>%
   mutate(Simulated = rnorm(n(), mean = v_mean, sd = v_sd)) %>%
   rename(Real = VelocityVacuum) %>%
   pivot_longer(
     cols = c(Simulated, Real),
     names_to = "source",
     values_to = "velocity"
-  ) %>%
+  )
 
-  ggplot(aes(Date, velocity)) +
-  geom_hline(
-    yintercept = LIGHTSPEED_MICHELSON,
-    linetype = "dotted"
-  ) +
-  geom_hline(
-    yintercept = LIGHTSPEED_MICHELSON - LIGHTSPEED_PM,
-    linetype = "dashed"
-  ) +
-  geom_hline(
-    yintercept = LIGHTSPEED_MICHELSON + LIGHTSPEED_PM,
-    linetype = "dashed"
-  ) +
-
-  geom_line(
-    data = . %>%
-      group_by(Date, source) %>%
-      summarize(velocity_mean = mean(velocity)),
-    mapping = aes(y = velocity_mean),
-    color = "grey50"
-  ) +
+p1 <- ggplot() +
   geom_point(
-    mapping = aes(y = velocity),
-    size = 0.8
+    data = df_q5, 
+    aes(x = Temp, y = velocity - LIGHTSPEED_VACUUM)
   ) +
-
-  facet_grid(source~.) +
   theme_minimal() +
   labs(
-    x = "Date of Measurement (1879)",
-    y = "Velocity (in Vacuum)"
+    x = "Temperature",
+    y = "Michelson's velocity compared to actual light speed (m/s)"
   )
+
+p2 <- ggplot() +
+  geom_boxplot(
+    data = df_q5, 
+    aes(x = Distinctness, y = velocity - LIGHTSPEED_VACUUM)) +
+  theme_minimal() +
+  labs(
+    x = "Distinctness of picture",
+    y = " "
+  )
+
+library(patchwork)
+p1 + p2
 ```
 
 **Observations**:
 
--   The vacuum might create differences to the plots.
+-   There is no distinct pattern of the data points in the first
+    subplot, and therefore the temperature is not necessarily relevant
+    to the errors in Michelson's velocity measurements.
+-   Although the mean error in Michelson's velocity measurements tends
+    to be slightly lower when distinctness is poor, the pattern is not
+    distinct as all three bars and boxes have wide ranges.
 
 ## Bibliography
 
