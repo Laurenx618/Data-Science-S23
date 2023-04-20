@@ -26,7 +26,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|------------------|-----------------------------|-------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -122,7 +122,6 @@ df_q3 <-
   ) %>%
   mutate(across(contains("median"), as.numeric)) %>%
 ## TODO: Pivot the data, rename the columns
-  glimpse() %>%
   pivot_longer(
     cols =! c("Geography", "Geographic Area Name"),
     names_to = c(".value", "category"),
@@ -278,13 +277,13 @@ df_data %>%
 **Observations**:
 
 -   Document your observations here.
-    -   (Your response here)
-    -   (Your response here)
-    -   ...
+    -   The median household income difference among different categories (2 to 6 -person families) is the smallest in Suffolk.
+    -   Nantucket and Dukes have the greatest confidence intervals of median household income values among all the counties.
+    -   Median household income generally increases as the number of people in the families increases, but there are some exceptions especially regarding 6-person families.
 -   Can you confidently distinguish between household incomes in Suffolk county? Why or why not?
-    -   (Your response here)
+    -   No, we cannot. The median household income among different categories are quite similar compared to other counties, and the confidence intervals overlap to a great extent.
 -   Which counties have the widest confidence intervals?
-    -   (Your response here)
+    -   Nantucket and Dukes.
 
 In the next task you'll investigate the relationship between population and uncertainty.
 
@@ -326,6 +325,20 @@ Now it's your turn! You have income data for every county in the United States: 
 
 ```{r q8-task}
 ## TODO: Pose and answer your own question about the data
+df_data %>%
+  filter(c(str_detect(geographic_area_name), between(population, 60000, 700000) )) %>%
+
+  ggplot(
+    aes(population_estimate, income_estimate, color = category)
+  ) +
+  geom_line() +
+  theme_minimal() +
+  guides(x =  guide_axis(angle = 90)) +
+  scale_x_log10(labels = scales::label_number_si()) +
+  labs(
+    y = "Income Estimate",
+    x = "Population"
+  )
 ```
 
 **Observations**:
