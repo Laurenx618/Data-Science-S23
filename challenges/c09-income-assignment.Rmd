@@ -326,7 +326,7 @@ Now it's your turn! You have income data for every county in the United States: 
 ```{r q8-task}
 ## TODO: Pose and answer your own question about the data
 df_data %>%
-  filter(c(str_detect(geographic_area_name), between(population, 60000, 700000) )) %>%
+  filter(str_detect(geographic_area_name, "Maine")) %>%
 
   ggplot(
     aes(population_estimate, income_estimate, color = category)
@@ -343,7 +343,7 @@ df_data %>%
 
 **Observations**:
 
--   Document your observations here
+-   The income estimation in Maine generally has an increasing trend along with a growing population per county, except that there are two distinct spikes across all the household categories that appeared when population is roughly 31k and 35k.
 
 Ideas:
 
