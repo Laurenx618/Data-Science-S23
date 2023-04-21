@@ -26,7 +26,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|--------------|----------------------------|-------------------------------|
+|-----------------|--------------------------|-----------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -87,7 +87,6 @@ filename_income <- "C:/Users/zxiong/Desktop/Olin/C-Data Science/data-science-cur
 ## NOTE: No need to edit
 df_income <-
   read_csv(filename_income, skip = 1)
-df_income
 ```
 
 Use the following test to check that you downloaded the correct file:
@@ -133,8 +132,6 @@ df_q3 <-
     income_moe = "Margin of Error"
   )
   # "Geography", "geographic_area_name", "category", "income_estimate", "income_moe"
-
-df_q3
 ```
 
 Use the following tests to check your work:
@@ -176,7 +173,6 @@ df_q4 <-
   ) 
   
 mean
-df_q4
 ```
 
 Use the following tests to check your work:
@@ -238,7 +234,6 @@ df_data <-
   by = "Geography"
   ) %>%
   select(-"Geographic Area Name")
-df_data
 ```
 
 # Analysis
