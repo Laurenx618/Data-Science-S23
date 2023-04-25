@@ -26,7 +26,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -86,7 +86,7 @@ df_samples %>%
 -   What is the mean strength of the material, approximately?
     -   The mean strength is around 40,000.
 -   To what extent can you tell what shape the distribution of the data has?
-    -   The data has a vague normal distribution, which a higher count of strength in the middle and lower counts towards the left and the right sides.
+    -   In general, the dataset has relatively more counts when the strength is around 40,000 (roughly in the center of the total range) and less fewer counts towards two sides. However, the type of distrubution cannot be definitively concluded due to a small sample size.
 -   Assuming the scopus is the strength of an individual part made from this aluminum alloy, is the observed variability real or induced?
     -   The observed variability is natural, because the individual parts are made from the same aluminum alloy.
 
@@ -209,7 +209,7 @@ df_norm_pof
 ```
 
 -   Assuming your scopus is the probability of failure `POF` defined above, does your estimate exhibit real variability, induced variability, or both?
-    -   The estimation exhibits a combination of real and induced variability. The real variability comes from the variation of strength in the generated training data, while the induced variability comes from the size of the Monte Carlo sampling method.
+    -   The estimation exhibits induced variability which comes from the sampling size of the Monte Carlo method.
 -   Does this confidence interval imply that `POF < 0.03`?
     -   Yes, because the higher value is 0.0198, which is much smaller than 0.03. This implies that the estimation of POF would generally lie in the range that's equal to or smaller than 0.0198.
 -   Compare this probability with your estimate from q2; is it more or less trustworthy?
@@ -279,7 +279,7 @@ df_samples %>% estimate_pof()
 -   Does this estimate have any uncertainty due to *limited physical tests*? Why or why not?
     -   Yes, because more physical tests might be able to generate a distribution model that fits the data set better.
 -   With the scopus as the `POF`, would uncertainty due to *limited physical tests* be induced or real?
-    -   Real.
+    -   Induced, because the number of physical tests are decided by us and has nothing to do with the intrinsic variability of the quantity we're measuring itself.
 
 ## Quantifying sampling uncertainty
 
@@ -307,7 +307,7 @@ df_samples %>%
 **Observations**:
 
 -   Does the confidence interval above account for uncertainty arising from *Monte Carlo approximation* of the POF? Why or why not?
-    -   Yes, because the result doesn't vary according to the sample size and is not affected by the uncertainty of this method.
+    -   The uncertainty is not accounted because we did not apply the normal distribution function to obtain the estimate.
 -   Does the confidence interval above account for uncertainty arising from *limited physical tests* (`df_samples`)? Why or why not?
     -   No, because the confidence interval only accounts for the model generated from the 25 tests in df_samples and cannot address the situations when the test size is greater or smaller than 25.
 -   Can you confidently conclude that `POF < 0.03`? Why or why not?

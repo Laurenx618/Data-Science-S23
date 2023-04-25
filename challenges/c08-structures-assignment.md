@@ -3,55 +3,37 @@ Structural Safety
 (Your name here)
 202X-XX-XX
 
-- <a href="#grading-rubric" id="toc-grading-rubric">Grading Rubric</a>
-  - <a href="#individual" id="toc-individual">Individual</a>
-  - <a href="#due-date" id="toc-due-date">Due Date</a>
-- <a href="#setup" id="toc-setup">Setup</a>
-  - <a
-    href="#q1-visualize-the-strength-data-with-a-histogram-answer-the-questions-below"
-    id="toc-q1-visualize-the-strength-data-with-a-histogram-answer-the-questions-below"><strong>q1</strong>
-    Visualize the strength data with a histogram. Answer the questions
-    below.</a>
-- <a href="#assessing-structural-safety"
-  id="toc-assessing-structural-safety">Assessing Structural Safety</a>
-  - <a href="#structural-model" id="toc-structural-model">Structural
-    model</a>
-    - <a
-      href="#q2-using-the-observations-in-df_samples-and-the-structural-model-g_break-estimate-the-probability-of-failure"
-      id="toc-q2-using-the-observations-in-df_samples-and-the-structural-model-g_break-estimate-the-probability-of-failure"><strong>q2</strong>
-      Using the observations in <code>df_samples</code> and the structural
-      model <code>g_break()</code>, estimate the probability of failure.</a>
-  - <a href="#material-property-model"
-    id="toc-material-property-model">Material property model</a>
-    - <a
-      href="#q3-fit-a-lognormal-distribution-to-the-strength-data-using-the-fitdistr-function"
-      id="toc-q3-fit-a-lognormal-distribution-to-the-strength-data-using-the-fitdistr-function"><strong>q3</strong>
-      Fit a lognormal distribution to the strength data using the
-      <code>fitdistr()</code> function.</a>
-    - <a
-      href="#q4-complete-the-code-below-by-1-choosing-a-monte-carlo-sample-size-n_monte_carlo-2-extracting-the-estimated-parameters-from-q3-and-3-computing-the-limit-state-value-g--g_break-answer-the-questions-under-observations-below"
-      id="toc-q4-complete-the-code-below-by-1-choosing-a-monte-carlo-sample-size-n_monte_carlo-2-extracting-the-estimated-parameters-from-q3-and-3-computing-the-limit-state-value-g--g_break-answer-the-questions-under-observations-below"><strong>q4</strong>
-      Complete the code below by 1. choosing a Monte Carlo sample size
-      <code>n_monte_carlo</code>, 2. extracting the estimated parameters from
-      q3, and 3. computing the limit state value <code>g = g_break()</code>.
-      Answer the questions under <em>observations</em> below.</a>
-  - <a href="#a-different-way-to-compute-the-pof"
-    id="toc-a-different-way-to-compute-the-pof">A different way to compute
-    the POF</a>
-    - <a
-      href="#q5-finish-the-following-function-by-computing-the-pof-with-plnorm-answer-the-questions-under-observations-below"
-      id="toc-q5-finish-the-following-function-by-computing-the-pof-with-plnorm-answer-the-questions-under-observations-below"><strong>q5</strong>
-      Finish the following function by computing the POF with
-      <code>plnorm()</code>. Answer the questions under <em>observations</em>
-      below.</a>
-  - <a href="#quantifying-sampling-uncertainty"
-    id="toc-quantifying-sampling-uncertainty">Quantifying sampling
-    uncertainty</a>
-    - <a
-      href="#q6-the-code-below-estimates-a-bootstrap-ci-on-your-pof-estimate-answer-the-questions-under-observations-below"
-      id="toc-q6-the-code-below-estimates-a-bootstrap-ci-on-your-pof-estimate-answer-the-questions-under-observations-below"><strong>q6</strong>
-      The code below estimates a bootstrap CI on your POF estimate. Answer the
-      questions under <em>observations</em> below.</a>
+- [Grading Rubric](#grading-rubric)
+  - [Individual](#individual)
+  - [Due Date](#due-date)
+- [Setup](#setup)
+  - [**q1** Visualize the strength data with a histogram. Answer the
+    questions
+    below.](#q1-visualize-the-strength-data-with-a-histogram-answer-the-questions-below)
+- [Assessing Structural Safety](#assessing-structural-safety)
+  - [Structural model](#structural-model)
+    - [**q2** Using the observations in `df_samples` and the structural
+      model `g_break()`, estimate the probability of
+      failure.](#q2-using-the-observations-in-df_samples-and-the-structural-model-g_break-estimate-the-probability-of-failure)
+  - [Material property model](#material-property-model)
+    - [**q3** Fit a lognormal distribution to the strength data using
+      the `fitdistr()`
+      function.](#q3-fit-a-lognormal-distribution-to-the-strength-data-using-the-fitdistr-function)
+    - [**q4** Complete the code below by 1. choosing a Monte Carlo
+      sample size `n_monte_carlo`, 2. extracting the estimated
+      parameters from q3, and 3. computing the limit state value
+      `g = g_break()`. Answer the questions under *observations*
+      below.](#q4-complete-the-code-below-by-1-choosing-a-monte-carlo-sample-size-n_monte_carlo-2-extracting-the-estimated-parameters-from-q3-and-3-computing-the-limit-state-value-g--g_break-answer-the-questions-under-observations-below)
+  - [A different way to compute the
+    POF](#a-different-way-to-compute-the-pof)
+    - [**q5** Finish the following function by computing the POF with
+      `plnorm()`. Answer the questions under *observations*
+      below.](#q5-finish-the-following-function-by-computing-the-pof-with-plnorm-answer-the-questions-under-observations-below)
+  - [Quantifying sampling
+    uncertainty](#quantifying-sampling-uncertainty)
+    - [**q6** The code below estimates a bootstrap CI on your POF
+      estimate. Answer the questions under *observations*
+      below.](#q6-the-code-below-estimates-a-bootstrap-ci-on-your-pof-estimate-answer-the-questions-under-observations-below)
 
 *Purpose*: Most real problems have multiple sources of uncertainty mixed
 together. Untangling these different sources can be challenging, even on
@@ -104,18 +86,33 @@ for more information.
 library(MASS)
 library(rsample)
 library(broom)
+```
+
+    ## Warning: package 'broom' was built under R version 4.2.3
+
+``` r
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-    ## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
-    ## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-    ## ✔ readr   2.1.2     ✔ forcats 0.5.1
+    ## Warning: package 'tidyverse' was built under R version 4.2.3
+
+    ## Warning: package 'ggplot2' was built under R version 4.2.3
+
+    ## Warning: package 'stringr' was built under R version 4.2.3
+
+    ## Warning: package 'forcats' was built under R version 4.2.3
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.0.9     ✔ readr     2.1.2
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+    ## ✔ ggplot2   3.4.2     ✔ tibble    3.1.8
+    ## ✔ lubridate 1.8.0     ✔ tidyr     1.2.0
+    ## ✔ purrr     0.3.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
     ## ✖ dplyr::select() masks MASS::select()
+    ## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
 
 ``` r
 filename_samples <- "./data/al_samples.csv"
@@ -127,11 +124,12 @@ material is the amount of mechanical stress it can survive before
 breaking. To illustrate: Stresses are internal forces that hold an
 object together when we try to squeeze, stretch, or otherwise deform a
 solid object. For instance, if we pull on a rectangular bar of material,
-internal stresses
-![\sigma](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Csigma "\sigma")
-work to keep the bar together.
+internal stresses $\sigma$ work to keep the bar together.
 
-![Stress](./images/stress.png)
+<figure>
+<img src="./images/stress.png" alt="Stress" />
+<figcaption aria-hidden="true">Stress</figcaption>
+</figure>
 
 By Jorge Stolfi - Own work, CC BY-SA 3.0,
 <https://commons.wikimedia.org/w/index.php?curid=24499456>
@@ -174,8 +172,7 @@ df_samples
     ##  8   39674.
     ##  9   40144.
     ## 10   39865.
-    ## # … with 15 more rows
-    ## # ℹ Use `print(n = ...)` to see more rows
+    ## # ℹ 15 more rows
 
 Data Dictionary:
 
@@ -201,9 +198,10 @@ df_samples %>%
   - The mean strength is around 40,000.
 - To what extent can you tell what shape the distribution of the data
   has?
-  - The data has a vague normal distribution, which a higher count of
-    strength in the middle and lower counts towards the left and the
-    right sides.
+  - In general, the dataset has relatively more counts when the strength
+    is around 40,000 (roughly in the center of the total range) and less
+    fewer counts towards two sides. However, the type of distrubution
+    cannot be definitively concluded due to a small sample size.
 - Assuming the scopus is the strength of an individual part made from
   this aluminum alloy, is the observed variability real or induced?
   - The observed variability is natural, because the individual parts
@@ -217,7 +215,7 @@ df_samples %>%
 assess its *probability of failure* (POF). A higher POF corresponds to a
 more unsafe structure. Ultimately, we want
 
-![\text{POF} \< 0.03.](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctext%7BPOF%7D%20%3C%200.03. "\text{POF} < 0.03.")
+$$\text{POF} < 0.03.$$
 
 Your job is to assess a given structure using the data provided and
 determine whether you can *confidently* conclude that `POF < 0.03`.
@@ -247,11 +245,9 @@ g_break <- function(strength) {
 ```
 
 The *probability of failure* (POF) is then defined in terms of the limit
-state
-![g](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g "g")
-via:
+state $g$ via:
 
-![\text{POF} \equiv \mathbb{P}\[g \leq 0\].](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctext%7BPOF%7D%20%5Cequiv%20%5Cmathbb%7BP%7D%5Bg%20%5Cleq%200%5D. "\text{POF} \equiv \mathbb{P}[g \leq 0].")
+$$\text{POF} \equiv \mathbb{P}[g \leq 0].$$
 
 ### **q2** Using the observations in `df_samples` and the structural model `g_break()`, estimate the probability of failure.
 
@@ -362,15 +358,13 @@ df_norm_pof
     ## # A tibble: 1 × 3
     ##   pof_lo pof_est pof_hi
     ##    <dbl>   <dbl>  <dbl>
-    ## 1 0.0178  0.0186 0.0195
+    ## 1 0.0172  0.0181 0.0189
 
 - Assuming your scopus is the probability of failure `POF` defined
   above, does your estimate exhibit real variability, induced
   variability, or both?
-  - The estimation exhibits a combination of real and induced
-    variability. The real variability comes from the variation of
-    strength in the generated training data, while the induced
-    variability comes from the size of the Monte Carlo sampling method.
+  - The estimation exhibits induced variability which comes from the
+    sampling size of the Monte Carlo method.
 - Does this confidence interval imply that `POF < 0.03`?
   - Yes, because the higher value is 0.0198, which is much smaller than
     0.03. This implies that the estimation of POF would generally lie in
@@ -408,7 +402,7 @@ introduces approximation error. It turns out that, for the simple
 problem we’re studying, we can compute the probability directly using
 the CDF. Note that for our structural safety problem, we have
 
-![\text{POF} = \mathbb{P}\[g \leq 0\] = \mathbb{P}\[S \leq L / A\] = \text{CDF}\_S(L/A).](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctext%7BPOF%7D%20%3D%20%5Cmathbb%7BP%7D%5Bg%20%5Cleq%200%5D%20%3D%20%5Cmathbb%7BP%7D%5BS%20%5Cleq%20L%20%2F%20A%5D%20%3D%20%5Ctext%7BCDF%7D_S%28L%2FA%29. "\text{POF} = \mathbb{P}[g \leq 0] = \mathbb{P}[S \leq L / A] = \text{CDF}_S(L/A).")
+$$\text{POF} = \mathbb{P}[g \leq 0] = \mathbb{P}[S \leq L / A] = \text{CDF}_S(L/A).$$
 
 Since
 `S = rlnorm(n, meanlog = strength_meanlog, sdlog = strength_sdlog)`, we
@@ -472,7 +466,9 @@ df_samples %>% estimate_pof()
     distribution model that fits the data set better.
 - With the scopus as the `POF`, would uncertainty due to *limited
   physical tests* be induced or real?
-  - Real.
+  - Induced, because the number of physical tests are decided by us and
+    has nothing to do with the intrinsic variability of the quantity
+    we’re measuring itself.
 
 ## Quantifying sampling uncertainty
 
@@ -506,14 +502,14 @@ df_samples %>%
     ## # A tibble: 1 × 6
     ##   term   .lower .estimate .upper .alpha .method   
     ##   <chr>   <dbl>     <dbl>  <dbl>  <dbl> <chr>     
-    ## 1 pof   0.00104    0.0184 0.0495   0.05 percentile
+    ## 1 pof   0.00104    0.0179 0.0496   0.05 percentile
 
 **Observations**:
 
 - Does the confidence interval above account for uncertainty arising
   from *Monte Carlo approximation* of the POF? Why or why not?
-  - Yes, because the result doesn’t vary according to the sample size
-    and is not affected by the uncertainty of this method.
+  - The uncertainty is not accounted because we did not apply the normal
+    distribution function to obtain the estimate.
 - Does the confidence interval above account for uncertainty arising
   from *limited physical tests* (`df_samples`)? Why or why not?
   - No, because the confidence interval only accounts for the model
