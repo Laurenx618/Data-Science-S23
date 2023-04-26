@@ -3,47 +3,32 @@ Gapminder
 (Your name here)
 2020-
 
-- <a href="#grading-rubric" id="toc-grading-rubric">Grading Rubric</a>
-  - <a href="#individual" id="toc-individual">Individual</a>
-  - <a href="#due-date" id="toc-due-date">Due Date</a>
-- <a href="#guided-eda" id="toc-guided-eda">Guided EDA</a>
-  - <a
-    href="#q0-perform-your-first-checks-on-the-dataset-what-variables-are-in-this"
-    id="toc-q0-perform-your-first-checks-on-the-dataset-what-variables-are-in-this"><strong>q0</strong>
-    Perform your “first checks” on the dataset. What variables are in
-    this</a>
-  - <a
-    href="#q1-determine-the-most-and-least-recent-years-in-the-gapminder-dataset"
-    id="toc-q1-determine-the-most-and-least-recent-years-in-the-gapminder-dataset"><strong>q1</strong>
-    Determine the most and least recent years in the <code>gapminder</code>
-    dataset.</a>
-  - <a
-    href="#q2-filter-on-years-matching-year_min-and-make-a-plot-of-the-gdp-per-capita-against-continent-choose-an-appropriate-geom_-to-visualize-the-data-what-observations-can-you-make"
-    id="toc-q2-filter-on-years-matching-year_min-and-make-a-plot-of-the-gdp-per-capita-against-continent-choose-an-appropriate-geom_-to-visualize-the-data-what-observations-can-you-make"><strong>q2</strong>
-    Filter on years matching <code>year_min</code>, and make a plot of the
-    GDP per capita against continent. Choose an appropriate
-    <code>geom_</code> to visualize the data. What observations can you
-    make?</a>
-  - <a
-    href="#q3-you-should-have-found-at-least-three-outliers-in-q2-but-possibly-many-more-identify-those-outliers-figure-out-which-countries-they-are"
-    id="toc-q3-you-should-have-found-at-least-three-outliers-in-q2-but-possibly-many-more-identify-those-outliers-figure-out-which-countries-they-are"><strong>q3</strong>
-    You should have found <em>at least</em> three outliers in q2 (but
+- [Grading Rubric](#grading-rubric)
+  - [Individual](#individual)
+  - [Due Date](#due-date)
+- [Guided EDA](#guided-eda)
+  - [**q0** Perform your “first checks” on the dataset. What variables
+    are in
+    this](#q0-perform-your-first-checks-on-the-dataset-what-variables-are-in-this)
+  - [**q1** Determine the most and least recent years in the `gapminder`
+    dataset.](#q1-determine-the-most-and-least-recent-years-in-the-gapminder-dataset)
+  - [**q2** Filter on years matching `year_min`, and make a plot of the
+    GDP per capita against continent. Choose an appropriate `geom_` to
+    visualize the data. What observations can you
+    make?](#q2-filter-on-years-matching-year_min-and-make-a-plot-of-the-gdp-per-capita-against-continent-choose-an-appropriate-geom_-to-visualize-the-data-what-observations-can-you-make)
+  - [**q3** You should have found *at least* three outliers in q2 (but
     possibly many more!). Identify those outliers (figure out which
-    countries they are).</a>
-  - <a
-    href="#q4-create-a-plot-similar-to-yours-from-q2-studying-both-year_min-and-year_max-find-a-way-to-highlight-the-outliers-from-q3-on-your-plot-in-a-way-that-lets-you-identify-which-country-is-which-compare-the-patterns-between-year_min-and-year_max"
-    id="toc-q4-create-a-plot-similar-to-yours-from-q2-studying-both-year_min-and-year_max-find-a-way-to-highlight-the-outliers-from-q3-on-your-plot-in-a-way-that-lets-you-identify-which-country-is-which-compare-the-patterns-between-year_min-and-year_max"><strong>q4</strong>
-    Create a plot similar to yours from q2 studying both
-    <code>year_min</code> and <code>year_max</code>. Find a way to highlight
-    the outliers from q3 on your plot <em>in a way that lets you identify
-    which country is which</em>. Compare the patterns between
-    <code>year_min</code> and <code>year_max</code>.</a>
-- <a href="#your-own-eda" id="toc-your-own-eda">Your Own EDA</a>
-  - <a
-    href="#q5-create-at-least-three-new-figures-below-with-each-figure-try-to-pose-new-questions-about-the-data"
-    id="toc-q5-create-at-least-three-new-figures-below-with-each-figure-try-to-pose-new-questions-about-the-data"><strong>q5</strong>
-    Create <em>at least</em> three new figures below. With each figure, try
-    to pose new questions about the data.</a>
+    countries they
+    are).](#q3-you-should-have-found-at-least-three-outliers-in-q2-but-possibly-many-more-identify-those-outliers-figure-out-which-countries-they-are)
+  - [**q4** Create a plot similar to yours from q2 studying both
+    `year_min` and `year_max`. Find a way to highlight the outliers from
+    q3 on your plot *in a way that lets you identify which country is
+    which*. Compare the patterns between `year_min` and
+    `year_max`.](#q4-create-a-plot-similar-to-yours-from-q2-studying-both-year_min-and-year_max-find-a-way-to-highlight-the-outliers-from-q3-on-your-plot-in-a-way-that-lets-you-identify-which-country-is-which-compare-the-patterns-between-year_min-and-year_max)
+- [Your Own EDA](#your-own-eda)
+  - [**q5** Create *at least* three new figures below. With each figure,
+    try to pose new questions about the
+    data.](#q5-create-at-least-three-new-figures-below-with-each-figure-try-to-pose-new-questions-about-the-data)
 
 *Purpose*: Learning to do EDA well takes practice! In this challenge
 you’ll further practice EDA by first completing a guided exploration,
@@ -86,18 +71,30 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-    ## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
-    ## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-    ## ✔ readr   2.1.2     ✔ forcats 0.5.1
+    ## Warning: package 'tidyverse' was built under R version 4.2.3
+
+    ## Warning: package 'ggplot2' was built under R version 4.2.3
+
+    ## Warning: package 'stringr' was built under R version 4.2.3
+
+    ## Warning: package 'forcats' was built under R version 4.2.3
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.0.9     ✔ readr     2.1.2
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+    ## ✔ ggplot2   3.4.2     ✔ tibble    3.1.8
+    ## ✔ lubridate 1.8.0     ✔ tidyr     1.2.0
+    ## ✔ purrr     0.3.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
 
 ``` r
 library(gapminder)
 ```
+
+    ## Warning: package 'gapminder' was built under R version 4.2.3
 
 *Background*: [Gapminder](https://www.gapminder.org/about-gapminder/) is
 an independent organization that seeks to educate people about the state
@@ -210,6 +207,7 @@ gapminder %>%
   filter(year == year_min) %>%
   ggplot() + 
   geom_boxplot(mapping = aes(x = continent, y = gdpPercap)) +
+  scale_y_log10() + 
   ylab("GDP per Capita") +
   xlab("Continent") +
   ggtitle("GPD per Capita of Each Continent")
