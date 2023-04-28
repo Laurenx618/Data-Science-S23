@@ -24,7 +24,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -108,7 +108,7 @@ The New York Times is publishing up-to-date data on COVID-19 on [GitHub](https:/
 ```{r q2-task}
 ## TASK: Find the URL for the NYT covid-19 county-level data
 url_counties <- "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
-df_covid <- read_csv("./data/nyt_counties.csv")
+df_covid <- read_csv(filename_nyt)
 df_covid
 ```
 
@@ -153,7 +153,6 @@ To join these datasets, we'll need to use [FIPS county codes](https://en.wikiped
 ```{r q3-task}
 ## TASK: Create a `fips` column by extracting the county code
 df_q3 <- df_pop %>% 
-  group_by(Geography) %>%
   mutate(
     fips = substr(Geography, 10, 14)
     )
@@ -177,12 +176,7 @@ print("Very good!")
 
 ```{r q4-task}
 ## TASK: Join df_covid and df_q3 by fips.
-df_q4 <- merge(
-  df_covid, 
-  df_q3[c("Estimate!!Total", "fips")], 
-  by = "fips"
-  ) %>%
-  mutate(fips = fct_reorder(fips, date))
+df_q4 <- left_join(df_covid, df_q3, by = "fips")
 head(df_q4, 10)
 ```
 
@@ -288,31 +282,21 @@ deaths_sd
 ```{r q7-task}
 ## TASK: Find the top 10 max cases_per100k counties; report populations as well
 df_normalized %>%
+  group_by(county, state, fips) %>%
   summarize(
-    county = fct_reorder(
-      county, 
-      cases_per100k, 
-      .desc = TRUE
-      ),
-    population = population
-  ) %>%
-  pull(county) %>%
-  levels() %>%
+    cases_per100k = max(cases_per100k),
+    population = max(population)
+    ) %>%
+  arrange(desc(cases_per100k)) %>%
   head(10)
 
-
-## TASK: Find the top 10 deaths_per100k counties; report populations as well
 df_normalized %>%
+  group_by(county, state, fips) %>%
   summarize(
-    county = fct_reorder(
-      county, 
-      deaths_per100k, 
-      .desc = TRUE
-      ),
-    population = population
-  ) %>%
-  pull(county) %>%
-  levels()%>%
+    deaths_per100k = max(deaths_per100k),
+    population = max(population)
+    ) %>%
+  arrange(desc(deaths_per100k)) %>%
   head(10)
 ```
 
@@ -358,7 +342,7 @@ df_normalized %>%
   )
 ```
 
-The number of cases per 100,000 persons increases seemingly linearly as population increases exponentially.
+The number of cases per 100,000 persons increases as population increases, indicating a positive relationship.
 
 ### Aside: Some visualization tricks
 
