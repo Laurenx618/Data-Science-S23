@@ -405,10 +405,13 @@ df_train %>%
     category as T_norm.
 - Would we have access to `avg_T` if we were trying to predict a *new*
   value of `T_norm`? Is `avg_T` a valid predictor?
-  - (Your response here)
+  - Yes, we would, and avg_T is a valid predictor because not only is it
+    in the same parameter category as T_norm but its general pattern
+    also lines up with T_norm very well.
 - What *Category* of variable is `idx`? Does it have any physical
   meaning?
-  - (Your response here)
+  - idx is the metadata of the data set, and it refers to the simulation
+    run number.
 
 ### **q4** Use a combination of EDA and train-validation error to build a model by selecting *reasonable* predictors for the `formula` argument. Document your findings under *observations* below. Try to build the most accurate model you can!
 
@@ -606,10 +609,16 @@ bind_rows(
 
 - Which model tends to be more accurate? How can you tell from this
   predicted-vs-actual plot?
-  - (Your response here)
+  - It is not easy to conclude a definitive answer from the plots above,
+    but it seems like the only-x model tends to be a bit more accurate
+    as both the lines and the dots have a pattern looks slightly closer
+    to y=x in comparison with the q4 model.
 - Which model tends to be *more confident* in its predictions? Put
   differently, which model has *narrower prediction intervals*?
-  - (Your response here)
+  - Again, it is a bit difficult to quantify the differences in the
+    prediction intervals without calculations - as they look overall
+    similar - but the only-x model seems to have narrower prediction
+    intervals and thus is more confident.
 - How many predictors does the `fit_simple` model need in order to make
   a prediction? What about your model `fit_q4`?
   - (Your response here)
@@ -674,16 +683,56 @@ pr_level <- 0.8
 #        use the validation data to check your uncertainty estimates, and 
 #        make a recommendation on a *dependable range* of values for T_norm
 #        at the point `df_design`
-fit_q6 <- NA
+fit_q6 <- fit_q4 <- df_train %>% 
+  lm(formula = T_norm ~ U_0)
+
+df_train %>%
+  add_predictions(
+    model = fit_q6,
+    var = "U_0"
+  ) %>%
+
+  ggplot(aes(U_0, T_norm)) +
+  geom_point() +
+  geom_line(
+    aes(y = U_0),
+    linetype = 2,
+    color = "salmon"
+  )
 ```
+
+![](c11-psaap-assignment_files/figure-gfm/q6-task-1.png)<!-- -->
+
+``` r
+mse(fit_q6, df_train)
+```
+
+    ## [1] 0.2104114
+
+``` r
+## NOTE: No need to change these error calculations; use them to
+##       help define your model
+rsquare(fit_q6, df_train)
+```
+
+    ## [1] 0.09519208
+
+``` r
+rsquare(fit_q6, df_validate)
+```
+
+    ## [1] 0.05886415
 
 **Recommendation**:
 
 - How much do you trust your model? Why?
-  - (Your response here)
+  - Not so much, because 1) 140 data points are not too limit but are
+    also not too much for a definitive conclusion.
 - What kind of interval—confidence or prediction—would you use for this
   task, and why?
-  - (Your response here)
+  - Prediction interval, because the goal is more related to exploring
+    the relationship between the fitted model and the real data, while
+    looking for the range of mean doesn’t necessarily serve the need.
 - What fraction of validation cases lie within the interval you predict?
   How does this compare with `pr_level`?
   - (Your response here)
