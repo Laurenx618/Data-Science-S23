@@ -42,7 +42,7 @@ define how you will be graded, both on an individual and team basis.
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -346,9 +346,11 @@ and in 1984 *Streptococcus fecalis* was renamed *Enterococcus fecalis*
 
 What is your response to the question above?
 
--   Because Diplococcus pneumoniae has similar reactions comparing to
-    Streptococcus hemolyticus and Streptococcus viridans to all the
-    three antibiotics.
+-   We can observe from Visual 4 that *Diplococcus pneumoniae* and
+    *Streptococcus viridans* have similar Streptomycin MICs response,
+    which further indicates that they might have similar biological
+    structures. It's plausible that the naming of the antibiotics are
+    closely related to their biological structures.
 
 Which of your visuals above (1 through 5) is **most effective** at
 helping to answer this question?

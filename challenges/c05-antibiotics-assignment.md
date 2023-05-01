@@ -57,18 +57,38 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-    ## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
-    ## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-    ## ✔ readr   2.1.2     ✔ forcats 0.5.1
+    ## Warning: package 'tidyverse' was built under R version 4.2.3
+
+    ## Warning: package 'ggplot2' was built under R version 4.2.3
+
+    ## Warning: package 'stringr' was built under R version 4.2.3
+
+    ## Warning: package 'forcats' was built under R version 4.2.3
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.0.9     ✔ readr     2.1.2
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+    ## ✔ ggplot2   3.4.2     ✔ tibble    3.1.8
+    ## ✔ lubridate 1.8.0     ✔ tidyr     1.2.0
+    ## ✔ purrr     0.3.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
 
 ``` r
 library(ggrepel)
+library(ggplot2) 
+library(treemapify)
 ```
+
+    ## Warning: package 'treemapify' was built under R version 4.2.3
+
+``` r
+library(ggplotify)
+```
+
+    ## Warning: package 'ggplotify' was built under R version 4.2.3
 
 *Background*: The data\[1\] we study in this challenge report the
 [*minimum inhibitory
@@ -161,6 +181,7 @@ df_antibiotics %>%
   geom_point(aes(y = neomycin, color = "neomycin", size = "neomycin", alpha = gram)) +
   ylab("MIC") +
   xlab("Bacteria") +
+  scale_y_log10() + 
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("MICs of 16 types of bacteria")
 ```
@@ -189,10 +210,10 @@ p1 <-  ggplot() +
       x = bacteria, 
       y = penicillin, 
       color = gram
-    ), fill = "darkred") +
-  guides(x =  guide_axis(angle = 90)) +
+    ), fill = "orange") +
   ylab("MIC") +
   xlab(" ") +
+  scale_y_log10() +
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("MICs of penicillin")
 
@@ -203,10 +224,10 @@ p2 <- ggplot() +
       x = bacteria, 
       y = streptomycin, 
       color = gram
-    ), fill = "orange") +
-  guides(x =  guide_axis(angle = 90)) +
+    ), fill = "brown") +
   ylab("MIC") +
   xlab(" ") +
+  scale_y_log10() +
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("MICs of streptomycin")
   
@@ -218,9 +239,9 @@ p3 <- ggplot() +
       y = neomycin, 
       color = gram
     ), fill = "navy") +
-  guides(x =  guide_axis(angle = 90)) +
   ylab("MIC") +
   xlab(" ") +
+  scale_y_log10() +
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("MICs of neomycin")
 
@@ -244,9 +265,15 @@ your other visuals.
 ``` r
 # WRITE YOUR CODE HERE
 ggplot(df_antibiotics, aes(x = bacteria)) +
-  geom_bar(aes(y = streptomycin, fill = streptomycin), position="stack", stat="identity") +
+  geom_line(aes(y = streptomycin, group = 1, color = 'Streptomycin'), linetype="dotted") +
+  geom_line(aes(y = penicillin, group = 1, color = 'Penicillin'), linetype="dotted") +
+  geom_line(aes(y = neomycin, group = 1, color = 'Neomycin'), linetype="dotted") +
+  scale_color_manual(
+    name = 'Y series', 
+    values = c('Streptomycin' = 'brown', 'Neomycin' = 'navy', 'Penicillin' = 'orange')) +
   ylab("MIC") +
-  xlab("Bacteria") +
+  xlab("Streptomycin") +
+  scale_y_log10() +
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("Streptomycin MICs of 16 types of bacteria") +
   theme(legend.position="top")
@@ -265,14 +292,40 @@ your other visuals.
 
 ``` r
 # WRITE YOUR CODE HERE
-df_antibiotics %>% 
-  ggplot(aes(x = bacteria, y = penicillin, group = 1)) + 
-  geom_path() +
-  geom_point() +
+ggplot(df_antibiotics, aes(x = reorder(bacteria, streptomycin))) +
+  geom_point(aes(y = streptomycin, color = 'Streptomycin')) +
+  geom_segment(
+    aes(
+      xend = reorder(bacteria, streptomycin),
+      y = 1,
+      yend = streptomycin,
+      color = 'Streptomycin')) +
+  
+  geom_point(aes(y = neomycin, color = 'Neomycin')) +
+  geom_segment(
+    aes(
+      xend = reorder(bacteria, streptomycin),
+      y = 1,
+      yend = neomycin,
+      color = 'Neomycin')) +
+  
+  geom_point(aes(y = penicillin, color = 'Penicillin')) +
+  geom_segment(
+    aes(
+      xend = reorder(bacteria, streptomycin),
+      y = 1,
+      yend = penicillin,
+      color = 'Penicillin')) +
+
   ylab("MIC") +
   xlab("Bacteria") +
+  scale_y_log10() +
   guides(x =  guide_axis(angle = 90)) +
-  ggtitle("MICs of 16 types of bacteria") +
+  ggtitle("Streptomycin MICs of 16 types of bacteria") +
+  coord_flip() +
+  scale_color_manual(
+    name = 'Y series', 
+    values = c('Neomycin' = 'navy', 'Penicillin' = 'orange', 'Streptomycin' = 'brown')) +
   theme(legend.position="top")
 ```
 
@@ -290,17 +343,24 @@ your other visuals.
 ``` r
 # WRITE YOUR CODE HERE
 df_antibiotics %>% 
-  ggplot(aes(x = bacteria, y = neomycin, group = 1, color = gram)) + 
-  geom_path() +
-  geom_point(aes(size = gram)) +
+  ggplot(aes(x = reorder(bacteria, neomycin), y = neomycin, color = gram)) + 
+  geom_bar(
+    fill = 'white', 
+    width = 1, 
+    stat = "identity"
+  ) +
   ylab("MIC") +
   xlab("Bacteria") +
   guides(x =  guide_axis(angle = 90)) +
   ggtitle("MICs of 16 types of bacteria") +
-  theme(legend.position="top")
+  scale_y_log10() +
+  coord_flip() +
+  theme(legend.position="top") +
+  coord_polar("y", start=2.175)
 ```
 
-    ## Warning: Using size for a discrete variable is not advised.
+    ## Coordinate system already present. Adding new coordinate system, which will
+    ## replace the existing one.
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.5-1.png)<!-- -->
 
@@ -329,18 +389,20 @@ What is your response to the question above?
 
 \- penicillin, streptomycin, neomycin,
 
-- Steptomycin is the most effective in treating against all bacteria
+- Streptomycin is the most effective in treating against all bacteria
   genera as it has the lowest MIC. On the contrary, penicillin is the
   least effective among all.
 
 Which of your visuals above (1 through 5) is **most effective** at
 helping to answer this question?
 
-- Visual No.2.
+- Visual No.4.
 
 Why?
 
-- It shows the scales of MICs of each of the three types of antibiotics.
+- The lollipop plots of the three different antibiotics type are stacked
+  over one another, which makes it very easy to compare and distinguish
+  among their MIC values.
 
 #### Guiding Question 2
 
@@ -355,9 +417,11 @@ and in 1984 *Streptococcus fecalis* was renamed *Enterococcus fecalis*
 
 What is your response to the question above?
 
-- Because Diplococcus pneumoniae has similar reactions comparing to
-  Streptococcus hemolyticus and Streptococcus viridans to all the three
-  antibiotics.
+- We can observe from Visual 4 that *Diplococcus pneumoniae* and
+  *Streptococcus viridans* have similar Streptomycin MICs response,
+  which further indicates that they might have similar biological
+  structures. It’s plausible that the naming of the antibiotics are
+  closely related to their biological structures.
 
 Which of your visuals above (1 through 5) is **most effective** at
 helping to answer this question?
