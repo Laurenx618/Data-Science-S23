@@ -10,24 +10,28 @@ output:
 *Purpose*: In this last challenge we'll focus on using logistic regression to study a large, complicated dataset. Interpreting the results of a model can be challenging---both in terms of the statistics and the real-world reasoning---so we'll get some practice in this challenge.
 
 <!-- include-rubric -->
+
 # Grading Rubric
+
 <!-- -------------------------------------------------- -->
 
 Unlike exercises, **challenges will be graded**. The following rubrics define how you will be graded, both on an individual and team basis.
 
 ## Individual
+
 <!-- ------------------------- -->
 
-| Category | Needs Improvement | Satisfactory |
-|----------|----------------|--------------|
-| Effort | Some task __q__'s left unattempted | All task __q__'s attempted |
-| Observed | Did not document observations, or observations incorrect | Documented correct observations based on analysis |
-| Supported | Some observations not clearly supported by analysis | All observations clearly supported by analysis (table, graph, etc.) |
-| Assessed | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support |
-| Specified | Uses the phrase "more data are necessary" without clarification | Any statement that "more data are necessary" specifies which *specific* data are needed to answer what *specific* question |
-| Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability | Code sufficiently close to the [style guide](https://style.tidyverse.org/) |
+| Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
+|------------------|-----------------------------|-------------------------|
+| Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
+| Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
+| Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
+| Assessed    | Observations include claims not supported by the data, or reflect a level of certainty not warranted by the data | Observations are appropriately qualified by the quality & relevance of the data and (in)conclusiveness of the support      |
+| Specified   | Uses the phrase "more data are necessary" without clarification                                                  | Any statement that "more data are necessary" specifies which *specific* data are needed to answer what *specific* question |
+| Code Styled | Violations of the [style guide](https://style.tidyverse.org/) hinder readability                                 | Code sufficiently close to the [style guide](https://style.tidyverse.org/)                                                 |
 
 ## Due Date
+
 <!-- ------------------------- -->
 
 All the deliverables stated in the rubrics above are due **at midnight** before the day of the class discussion of the challenge. See the [Syllabus](https://docs.google.com/document/d/1qeP6DUS8Djq_A0HMllMqsSqX3a9dbcx1/edit?usp=sharing&ouid=110386251748498665069&rtpof=true&sd=true) for more information.
@@ -40,86 +44,151 @@ library(broom)
 ```
 
 # Setup
+
 <!-- -------------------------------------------------- -->
 
-### __q1__ Go to the [Stanford Open Policing Project](https://openpolicing.stanford.edu/data/) page and download the Massachusetts State Police records in `Rds` format. Move the data to your `data` folder and match the `filename` to load the data.
+### **q1** Go to the [Stanford Open Policing Project](https://openpolicing.stanford.edu/data/) page and download the Massachusetts State Police records in `Rds` format. Move the data to your `data` folder and match the `filename` to load the data.
 
 *Note*: An `Rds` file is an R-specific file format. The function `readRDS` will read these files.
 
 ```{r q1-task}
 ## TODO: Download the data, move to your data folder, and load it
-filename <- NA_character_
+filename <- "C:/Users/zxiong/Desktop/Olin/C-Data Science/data-science-curriculum-build/challenges/data/ma_statewide_2020_04_01.rds"
 df_data <- readRDS(filename)
+glimpse(df_data)
 ```
 
 # EDA
+
 <!-- -------------------------------------------------- -->
 
-### __q2__ Do your "first checks" on the dataset. What are the basic facts about this dataset?
+### **q2** Do your "first checks" on the dataset. What are the basic facts about this dataset?
 
+-   It's a rich dataset with 24 columns that collects people's demographics, and there are 3,416,238 rows in total.
 
 Note that we have both a `subject_race` and `race_Raw` column. There are a few possibilities as to what `race_Raw` represents:
 
-- `race_Raw` could be the race of the police officer in the stop
-- `race_Raw` could be an unprocessed version of `subject_race`
+-   `race_Raw` could be the race of the police officer in the stop
+-   `race_Raw` could be an unprocessed version of `subject_race`
 
 Let's try to distinguish between these two possibilities.
 
-### __q3__ Check the set of factor levels for `subject_race` and `raw_Race`. What do you note about overlap / difference between the two sets?
+### **q3** Check the set of factor levels for `subject_race` and `raw_Race`. What do you note about overlap / difference between the two sets?
 
 ```{r q3-task}
 ## TODO: Determine the factor levels for subject_race and raw_Race
+df_data %>%
+  pull(subject_race) %>%
+  levels()
+
+df_data %>%
+  pull(raw_Race) %>%
+  unique()
 ```
 
 **Observations**:
 
-- What are the unique values for `subject_race`?
-- What are the unique values for `raw_Race`?
-- What is the overlap between the two sets?
-- What is the difference between the two sets?
+-   What are the unique values for `subject_race`?
+    -   "asian/pacific islander", "black", "hispanic" , "white", "other", "unknown".
+-   What are the unique values for `raw_Race`?
+    -   "Asian or Pacific Islander", "White", "Hispanic", "Black", "Asian or Pacific Islander", "Middle Eastern or East Indian (South Asian)", "American Indian or Alaskan Native", NA, "None - for no operator present citations only", "A".
+-   What is the overlap between the two sets?
+    -   "Black", "White", "Hispanic", and "Asian or Pacific Islander".
+-   What is the difference between the two sets?
+    -   `subject_race` describes "Middle Eastern or East Indian (South Asian)" and "American Indian or Alaskan Native" in `raw_Race` as "others, and it also describes NA, "None - for no operator present citations only", and "A" in `raw_Race` as "unknown".
 
-### __q4__ Check whether `subject_race` and `raw_Race` match for a large fraction of cases. Which of the two hypotheses above is most likely, based on your results?
+### **q4** Check whether `subject_race` and `raw_Race` match for a large fraction of cases. Which of the two hypotheses above is most likely, based on your results?
 
 *Note*: Just to be clear, I'm *not* asking you to do a *statistical* hypothesis test.
 
 ```{r q4-task}
 ## TODO: Devise your own way to test the hypothesis posed above.
+rep_str = c(
+  'asian/pacific islander' = 'Asian or Pacific Islander',
+  'hispanic' = 'Hispanic',
+  'black' = 'Black',
+  'white' = 'White'
+)
+df_q4 <- df_data
+df_q4$subject_race <- str_replace_all(df_q4$subject_race, rep_str)
+find_same <- ifelse(df_q4$subject_race == df_q4$raw_Race,1,0)
+similarity <- mean(find_same, na.rm = TRUE)
+similarity
 ```
 
 **Observations**
 
 Between the two hypotheses:
 
-- `race_Raw` could be the race of the police officer in the stop
-- `race_Raw` could be an unprocessed version of `subject_race`
+-   `race_Raw` could be the race of the police officer in the stop
+-   `race_Raw` could be an unprocessed version of `subject_race`
 
 which is most plausible, based on your results?
 
-- (Your response here)
+-   `raw_Race` matches up with `subject_race` by 97.3%, which indicates that the former is more likely to be an unprocessed version of `subject_race`. If the first statement "`raw_Race` could be the race of the police officer in the stop" were to be true, there would be almost no correlation between `raw_Race` and `subject_race`.
 
 ## Vis
+
 <!-- ------------------------- -->
 
-### __q5__ Compare the *arrest rate*---the fraction of total cases in which the subject was arrested---across different factors. Create as many visuals (or tables) as you need, but make sure to check the trends across all of the `subject` variables. Answer the questions under *observations* below.
+### **q5** Compare the *arrest rate*---the fraction of total cases in which the subject was arrested---across different factors. Create as many visuals (or tables) as you need, but make sure to check the trends across all of the `subject` variables. Answer the questions under *observations* below.
 
 (Note: Create as many chunks and visuals as you need)
 
+```{r}
+df_q5_1 <- df_data
+df_q5_1$arrest_made <- as.integer(as.logical(df_q5_1$arrest_made))
+
+df_q5_1 %>%
+  group_by(subject_age) %>%
+  summarise(
+    total_arrest = sum(arrest_made, na.rm = TRUE),
+    total_cases = sum(arrest_made == 0 | 1, na.rm = TRUE),
+    arrest_rate = total_arrest / total_cases
+  ) %>%
+  ggplot() +
+  geom_col(
+    aes(x = subject_age, y = arrest_rate),
+    position = position_dodge()
+  ) + 
+  guides(x =  guide_axis(angle = 90))
+```
+
+```{r}
+df_q5_1 %>%
+  group_by(subject_race, subject_sex) %>%
+  summarise(
+    total_arrest = sum(arrest_made, na.rm = TRUE),
+    total_cases = sum(arrest_made == 0 | 1, na.rm = TRUE),
+    arrest_rate = total_arrest / total_cases
+  ) %>%
+  ggplot() +
+  geom_col(
+    aes(
+      x = subject_race, 
+      y = arrest_rate, 
+      fill = subject_sex
+    )
+  ) + 
+  guides(x =  guide_axis(angle = 90))
+```
 
 **Observations**:
 
-- How does `arrest_rate` tend to vary with `subject_age`?
-  - (Your response here)
-- How does `arrest_rate` tend to vary with `subject_sex`?
-  - (Your response here)
-- How does `arrest_rate` tend to vary with `subject_race`?
-  - (Your response here)
+-   How does `arrest_rate` tend to vary with `subject_age`?
+    -   `arrest_rate` is the highest among the people aged between 14 and 16, and it dropped dramatically at 17. It then increases gradually as age increases from 17 to 28 and decreases from 28 to 75. There is a slight increasing trend when age increases from 75 to 92.
+-   How does `arrest_rate` tend to vary with `subject_sex`?
+    -   `arrest_rate` of female is generally lower than male.
+-   How does `arrest_rate` tend to vary with `subject_race`?
+    -   `arrest_rate` is the highest among hispanic and black populations, and it is the lowest among unknown and asian/pacific islander populations.
 
 # Modeling
+
 <!-- -------------------------------------------------- -->
 
 We're going to use a model to study the relationship between `subject` factors and arrest rate, but first we need to understand a bit more about *dummy variables*
 
-### __q6__ Run the following code and interpret the regression coefficients. Answer the the questions under *observations* below.
+### **q6** Run the following code and interpret the regression coefficients. Answer the the questions under *observations* below.
 
 ```{r q6-task}
 ## NOTE: No need to edit; inspect the estimated model terms.
@@ -139,10 +208,10 @@ fit_q6 %>% tidy()
 
 **Observations**:
 
-- Which `subject_race` levels are included in fitting the model?
-  - (Your response here)
-- Which `subject_race` levels have terms in the model?
-  - (Your response here)
+-   Which `subject_race` levels are included in fitting the model?
+    -   Hispanic, black and white.
+-   Which `subject_race` levels have terms in the model?
+    -   Hispanic and white.
 
 You should find that each factor in the model has a level *missing* in its set of terms. This is because R represents factors against a *reference level*: The model treats one factor level as "default", and each factor model term represents a change from that "default" behavior. For instance, the model above treats `subject_sex==male` as the reference level, so the `subject_sexfemale` term represents the *change in probability* of arrest due to a person being female (rather than male).
 
@@ -150,48 +219,81 @@ The this reference level approach to coding factors is necessary for [technical 
 
 By default `glm` uses the first factor level present as the reference level. Therefore we can use `mutate(factor = fct_relevel(factor, "desired_level"))` to set our `"desired_level"` as the reference factor.
 
-### __q7__ Re-fit the logistic regression from q6 setting `"white"` as the reference level for `subject_race`. Interpret the the model terms and answer the questions below.
+### **q7** Re-fit the logistic regression from q6 setting `"white"` as the reference level for `subject_race`. Interpret the the model terms and answer the questions below.
 
 ```{r q7-task}
 ## TODO: Re-fit the logistic regression, but set "white" as the reference
 ## level for subject_race
+df_q7 <- df_data
+df_q7$subject_race <- relevel(df_q7$subject_race, ref = "white")
+
+fit_q7 <- glm(
+    formula = arrest_made ~ subject_age + subject_race + subject_sex,
+    data = df_q7 %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic", "asian/pacific islander", "other", "unknown")
+      ),
+    family = "binomial"
+  )
 
 fit_q7 %>% tidy()
 ```
 
 **Observations**:
 
-- Which `subject_race` level has the highest probability of being arrested, according to this model? Which has the lowest probability?
-  - (Your response here)
-- What could explain this difference in probabilities of arrest across race? List **multiple** possibilities.
-  - (Your response here)
-- Look at the sent of variables in the dataset; do any of the columns relate to a potential explanation you listed?
-  - (Your response here)
+-   Which `subject_race` level has the highest probability of being arrested, according to this model? Which has the lowest probability?
+    -   Hispanic has the highest probability of being arrested, and unknown has the lowest.
+-   What could explain this difference in probabilities of arrest across race? List **multiple** possibilities.
+    -   The race of the police officers working in the area, culture, economy, stereotypes, etc.
+-   Look at the sent of variables in the dataset; do any of the columns relate to a potential explanation you listed?
+    -   County name potentially reflects the economic background of the area.
 
 One way we can explain differential arrest rates is to include some measure indicating the presence of an arrestable offense. We'll do this in a particular way in the next task.
 
-### __q8__ Re-fit the model using a factor indicating the presence of contraband in the subject's vehicle. Answer the questions under *observations* below.
+### **q8** Re-fit the model using a factor indicating the presence of contraband in the subject's vehicle. Answer the questions under *observations* below.
 
 ```{r q8-task}
 ## TODO: Repeat the modeling above, but control for whether contraband was found
 ## during the police stop
+df_q8 <- df_data
+
+fit_q8 <- glm(
+    formula = 
+      contraband_found ~ 
+      contraband_alcohol + 
+      contraband_drugs + 
+      contraband_weapons +
+      contraband_other,
+    data = df_q8 %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic", "asian/pacific islander", "other", "unknown")
+      ),
+    family = "binomial"
+  )
+
 fit_q8 %>% tidy()
 ```
 
 **Observations**:
 
-- How does controlling for found contraband affect the `subject_race` terms in the model?
-  - (Your response here)
-- What does the *finding of contraband* tell us about the stop? What does it *not* tell us about the stop?
-  - (Your response here)
+-   How does controlling for found contraband affect the `subject_race` terms in the model?
 
-### __q9__ Go deeper: Pose at least one more question about the data and fit at least one more model in support of answering that question.
+    -   Contraband presence has pretty big standard error overall, so it doesn't affect the `subject_race` by very much.
+
+    What does the *finding of contraband* tell us about the stop? What does it *not* tell us about the stop?
+
+    -   Drugs are one of the most commonly object that presents in the vehicle, but it doesn't tell us about other potential reasons of the stop, e.g. speed limit of the specific area.
+
+### **q9** Go deeper: Pose at least one more question about the data and fit at least one more model in support of answering that question.
 
 **Observations**:
 
-- Document your question and findings
+-   Document your question and findings
 
 ## Further Reading
+
 <!-- -------------------------------------------------- -->
 
-- Stanford Open Policing Project [findings](https://openpolicing.stanford.edu/findings/).
+-   Stanford Open Policing Project [findings](https://openpolicing.stanford.edu/findings/).
