@@ -24,7 +24,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|--------------|----------------------------|-------------------------------|
+|------------------|--------------------------|-----------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -108,8 +108,6 @@ The New York Times is publishing up-to-date data on COVID-19 on [GitHub](https:/
 ```{r q2-task}
 ## TASK: Find the URL for the NYT covid-19 county-level data
 url_counties <- "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
-df_covid <- read_csv(filename_nyt)
-df_covid
 ```
 
 Once you have the url, the following code will download a local copy of the data, then load the data into R.
@@ -216,8 +214,8 @@ df_normalized <-
   mutate(
     cases_per100k = cases/population*100000,
     deaths_per100k = deaths/population*100000
-    )
-df_normalized[is.na(df_normalized)] <- 0
+  )
+# df_normalized[is.na(df_normalized)] <- 0
 ```
 
 You may use the following test to check your work.
@@ -266,15 +264,25 @@ Before turning you loose, let's complete a couple guided EDA tasks.
 
 ```{r q6-task}
 ## TASK: Compute mean and sd for cases_per100k and deaths_per100k
-cases_mean <- mean(df_normalized$cases_per100k)
-cases_sd <- sd(df_normalized$cases_per100k)
-deaths_mean <- mean(df_normalized$deaths)
-deaths_sd <- sd(df_normalized$deaths_per100k)
-
-cases_mean 
-cases_sd
-deaths_mean 
-deaths_sd
+# cases_stats <- 
+df_normalized %>%
+  filter(date == "2020-03-12") %>%
+  summarize(
+    cases_mean = mean(cases_per100k, na.rm = TRUE),
+    cases_sd = sd(cases_per100k, na.rm = TRUE),
+    deaths_mean = mean(deaths_per100k, na.rm = TRUE),
+    deaths_sd = sd(deaths_per100k, na.rm = TRUE)
+  )
+  
+# deaths_stats <- df_normalized %>%
+#   filter(date == "2020-01-21") %>%
+#   summarize(
+#     deaths_mean = mean(deaths_per100k, na.rm = TRUE),
+#     deaths_sd = sd(deaths_per100k)
+#   )
+# 
+# cases_stats
+# deaths_stats
 ```
 
 ### **q7** Find the top 10 counties in terms of `cases_per100k`, and the top 10 in terms of `deaths_per100k`. Report the population of each county along with the per-100,000 counts. Compare the counts against the mean values you found in q6. Note any observations.
@@ -282,6 +290,7 @@ deaths_sd
 ```{r q7-task}
 ## TASK: Find the top 10 max cases_per100k counties; report populations as well
 df_normalized %>%
+  filter(date == "2020-03-12") %>%
   group_by(county, state, fips) %>%
   summarize(
     cases_per100k = max(cases_per100k),
@@ -291,6 +300,7 @@ df_normalized %>%
   head(10)
 
 df_normalized %>%
+  filter(date == "2020-03-12") %>%
   group_by(county, state, fips) %>%
   summarize(
     deaths_per100k = max(deaths_per100k),
@@ -302,7 +312,7 @@ df_normalized %>%
 
 **Observations**:
 
--   I'm not sure how to print out the population :(
+-   King country in Washington State has the largest population among all counties that ranked top 10 regarding both cases per 100,000 and deaths per 100,000 on March 12th, 2020.
 
 ## Self-directed EDA
 
@@ -330,7 +340,7 @@ df_normalized %>%
     population = population
   ) %>%
   ggplot(
-    aes(population, sum_cases, color = fct_reorder2(county, population, sum_cases))
+    aes(population, sum_cases, color = county)
   ) +
   geom_point() +
   scale_x_continuous(trans='log10') +
@@ -354,9 +364,10 @@ These data get a little busy, so it's helpful to know a few `ggplot` tricks to h
 ## NOTE: No need to change this; just an example
 df_normalized %>%
   filter(state == "Massachusetts") %>%
-
+  
   ggplot(
-    aes(date, cases_per100k, color = fct_reorder2(county, date, cases_per100k))
+    # aes(date, cases_per100k, color = fct_reorder2(county, date, cases_per100k))
+    aes(date, cases_per100k, color = county)
   ) +
   geom_line() +
   scale_y_log10(labels = scales::label_number_si()) +
