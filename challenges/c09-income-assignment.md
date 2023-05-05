@@ -335,7 +335,7 @@ mean
 
     ## function (x, ...) 
     ## UseMethod("mean")
-    ## <bytecode: 0x0000027139a4bb38>
+    ## <bytecode: 0x0000019446bb9b28>
     ## <environment: namespace:base>
 
 Use the following tests to check your work:
@@ -498,10 +498,11 @@ df_data %>%
   ggplot(
     aes(population_estimate, income_SE, color = category)
   ) +
-  geom_line() +
+  geom_point() +
   theme_minimal() +
   guides(x =  guide_axis(angle = 90)) +
   scale_x_log10(labels = scales::label_number_si()) +
+  scale_y_log10() +
   labs(
     y = "Income Standard Error",
     x = "Population"
@@ -514,7 +515,7 @@ df_data %>%
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
-    ## Warning: Removed 2 rows containing missing values (`geom_line()`).
+    ## Warning: Removed 2 rows containing missing values (`geom_point()`).
 
 ![](c09-income-assignment_files/figure-gfm/q7-task-1.png)<!-- -->
 
@@ -526,8 +527,8 @@ df_data %>%
     with the increase of population.
 - What does this *overall* trend tell you about the relative ease of
   studying small vs large counties?
-  - It’s easier to study the smaller counties because they tend to have
-    a smaller standard error.
+  - It’s easier to study the larger counties because they tend to have a
+    smaller standard error.
 
 # Going Further
 

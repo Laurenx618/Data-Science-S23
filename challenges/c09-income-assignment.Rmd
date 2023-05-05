@@ -26,7 +26,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-----------------|--------------------------|-----------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -293,10 +293,11 @@ df_data %>%
   ggplot(
     aes(population_estimate, income_SE, color = category)
   ) +
-  geom_line() +
+  geom_point() +
   theme_minimal() +
   guides(x =  guide_axis(angle = 90)) +
   scale_x_log10(labels = scales::label_number_si()) +
+  scale_y_log10() +
   labs(
     y = "Income Standard Error",
     x = "Population"
@@ -308,7 +309,7 @@ df_data %>%
 -   What *overall* trend do you see between `SE` and population? Why might this trend exist?
     -   The income standard error decreases on a log base 10 scale along with the increase of population.
 -   What does this *overall* trend tell you about the relative ease of studying small vs large counties?
-    -   It's easier to study the smaller counties because they tend to have a smaller standard error.
+    -   It's easier to study the larger counties because they tend to have a smaller standard error.
 
 # Going Further
 
