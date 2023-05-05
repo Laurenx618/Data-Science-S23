@@ -42,7 +42,7 @@ define how you will be graded, both on an individual and team basis.
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|--------------|----------------------------|-------------------------------|
+|------------------|--------------------------|-----------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -143,6 +143,124 @@ your other visuals.
 
 ```{r q1.2}
 # WRITE YOUR CODE HERE
+df_antibiotics %>%
+  group_by(gram) %>%
+  pivot_longer(
+    c('penicillin', 'streptomycin', 'neomycin'),
+    names_to = "antibiotics", 
+    values_to = "MIC"
+  ) %>%
+  ggplot() +
+  geom_col(mapping = aes(
+    x = bacteria,
+    y = MIC,
+    fill = antibiotics
+  ), position = position_dodge(0.8)
+  ) +
+  facet_wrap(~ gram) + 
+  ylab("MIC") +
+  xlab(" ") +
+  scale_y_log10() +
+  guides(x =  guide_axis(angle = 90)) +
+  ggtitle("MICs of penicillin")
+
+```
+
+#### Visual 3 (Some variables)
+
+In this visual you may show a *subset* of the variables (`penicillin`,
+`streptomycin`, `neomycin`, `gram`), but you must still show *all 16
+bacteria*.
+
+Note that your visual must be *qualitatively different* from *all* of
+your other visuals.
+
+```{r q1.3}
+# WRITE YOUR CODE HERE
+ggplot(df_antibiotics, aes(x = bacteria)) +
+  geom_line(aes(y = streptomycin, group = 1, color = 'Streptomycin'), linetype="dotted") +
+  geom_line(aes(y = penicillin, group = 1, color = 'Penicillin'), linetype="dotted") +
+  geom_line(aes(y = neomycin, group = 1, color = 'Neomycin'), linetype="dotted") +
+  scale_color_manual(
+    name = 'Y series', 
+    values = c('Streptomycin' = 'brown', 'Neomycin' = 'navy', 'Penicillin' = 'orange')) +
+  ylab("MIC") +
+  xlab("Streptomycin") +
+  scale_y_log10() +
+  guides(x =  guide_axis(angle = 90)) +
+  ggtitle("Streptomycin MICs of 16 types of bacteria") +
+  theme(legend.position="top")
+```
+
+#### Visual 4 (Some variables)
+
+In this visual you may show a *subset* of the variables (`penicillin`,
+`streptomycin`, `neomycin`, `gram`), but you must still show *all 16
+bacteria*.
+
+Note that your visual must be *qualitatively different* from *all* of
+your other visuals.
+
+```{r q1.4}
+# WRITE YOUR CODE HERE
+df_antibiotics %>%
+  ggplot(aes(x = streptomycin, y = penicillin)) +
+  geom_point(aes()) +
+
+# df_q4 %>%
+#   ggplot(aes(x = reorder(bacteria, streptomycin))) +
+#   geom_point(aes(y = streptomycin, color = 'Streptomycin')) +
+#   geom_point(aes(y = neomycin, color = 'Neomycin')) +
+#   geom_point(aes(y = penicillin, color = 'Penicillin')) +
+  
+  # geom_point(
+  #   aes(
+  #     xend = reorder(bacteria, streptomycin),
+  #     y = 1,
+  #     yend = streptomycin,
+  #     color = 'Streptomycin')) +
+  
+  # geom_point(
+  #   aes(
+  #     xend = reorder(bacteria, streptomycin),
+  #     y = 1,
+  #     yend = neomycin,
+  #     color = 'Neomycin')) +
+
+  # geom_point(
+  #   aes(
+  #     xend = reorder(bacteria, streptomycin),
+  #     y = 1,
+  #     yend = penicillin,
+  #     color = 'Penicillin')) +
+  geom_text_repel(
+    aes(label = bacteria),
+    size = 2
+  ) +
+
+  ylab("penicillin") +
+  xlab("streptomycin") +
+  scale_y_log10() +
+  scale_x_log10() +
+  guides(x =  guide_axis(angle = 90)) +
+  ggtitle("Streptomycin MICs of 16 types of bacteria") +
+  # scale_color_manual(
+  #   name = 'Y series', 
+  #   values = c('Neomycin' = 'navy', 'Penicillin' = 'orange', 'Streptomycin' = 'brown')) +
+  theme(legend.position="top")
+```
+
+#### Visual 5 (Some variables)
+
+In this visual you may show a *subset* of the variables (`penicillin`,
+`streptomycin`, `neomycin`, `gram`), but you must still show *all 16
+bacteria*.
+
+Note that your visual must be *qualitatively different* from *all* of
+your other visuals.
+
+```{r q1.5}
+# WRITE YOUR CODE HERE
 p1 <-  ggplot() +
   geom_col(
     data = df_antibiotics, 
@@ -191,108 +309,6 @@ p1 + theme(legend.position="top", axis.title.y = element_blank()) +
   p3 + theme(legend.position="top", axis.title.y = element_blank())
 ```
 
-#### Visual 3 (Some variables)
-
-In this visual you may show a *subset* of the variables (`penicillin`,
-`streptomycin`, `neomycin`, `gram`), but you must still show *all 16
-bacteria*.
-
-Note that your visual must be *qualitatively different* from *all* of
-your other visuals.
-
-```{r q1.3}
-# WRITE YOUR CODE HERE
-ggplot(df_antibiotics, aes(x = bacteria)) +
-  geom_line(aes(y = streptomycin, group = 1, color = 'Streptomycin'), linetype="dotted") +
-  geom_line(aes(y = penicillin, group = 1, color = 'Penicillin'), linetype="dotted") +
-  geom_line(aes(y = neomycin, group = 1, color = 'Neomycin'), linetype="dotted") +
-  scale_color_manual(
-    name = 'Y series', 
-    values = c('Streptomycin' = 'brown', 'Neomycin' = 'navy', 'Penicillin' = 'orange')) +
-  ylab("MIC") +
-  xlab("Streptomycin") +
-  scale_y_log10() +
-  guides(x =  guide_axis(angle = 90)) +
-  ggtitle("Streptomycin MICs of 16 types of bacteria") +
-  theme(legend.position="top")
-```
-
-#### Visual 4 (Some variables)
-
-In this visual you may show a *subset* of the variables (`penicillin`,
-`streptomycin`, `neomycin`, `gram`), but you must still show *all 16
-bacteria*.
-
-Note that your visual must be *qualitatively different* from *all* of
-your other visuals.
-
-```{r q1.4}
-# WRITE YOUR CODE HERE
-ggplot(df_antibiotics, aes(x = reorder(bacteria, streptomycin))) +
-  geom_point(aes(y = streptomycin, color = 'Streptomycin')) +
-  geom_segment(
-    aes(
-      xend = reorder(bacteria, streptomycin),
-      y = 1,
-      yend = streptomycin,
-      color = 'Streptomycin')) +
-  
-  geom_point(aes(y = neomycin, color = 'Neomycin')) +
-  geom_segment(
-    aes(
-      xend = reorder(bacteria, streptomycin),
-      y = 1,
-      yend = neomycin,
-      color = 'Neomycin')) +
-  
-  geom_point(aes(y = penicillin, color = 'Penicillin')) +
-  geom_segment(
-    aes(
-      xend = reorder(bacteria, streptomycin),
-      y = 1,
-      yend = penicillin,
-      color = 'Penicillin')) +
-
-  ylab("MIC") +
-  xlab("Bacteria") +
-  scale_y_log10() +
-  guides(x =  guide_axis(angle = 90)) +
-  ggtitle("Streptomycin MICs of 16 types of bacteria") +
-  coord_flip() +
-  scale_color_manual(
-    name = 'Y series', 
-    values = c('Neomycin' = 'navy', 'Penicillin' = 'orange', 'Streptomycin' = 'brown')) +
-  theme(legend.position="top")
-```
-
-#### Visual 5 (Some variables)
-
-In this visual you may show a *subset* of the variables (`penicillin`,
-`streptomycin`, `neomycin`, `gram`), but you must still show *all 16
-bacteria*.
-
-Note that your visual must be *qualitatively different* from *all* of
-your other visuals.
-
-```{r q1.5}
-# WRITE YOUR CODE HERE
-df_antibiotics %>% 
-  ggplot(aes(x = reorder(bacteria, neomycin), y = neomycin, color = gram)) + 
-  geom_bar(
-    fill = 'white', 
-    width = 1, 
-    stat = "identity"
-  ) +
-  ylab("MIC") +
-  xlab("Bacteria") +
-  guides(x =  guide_axis(angle = 90)) +
-  ggtitle("MICs of 16 types of bacteria") +
-  scale_y_log10() +
-  coord_flip() +
-  theme(legend.position="top") +
-  coord_polar("y", start=2.175)
-```
-
 ### **q2** Assess your visuals
 
 There are **two questions** below; use your five visuals to help answer
@@ -318,14 +334,23 @@ What is your response to the question above?
 
 \- penicillin, streptomycin, neomycin,
 
--   Streptomycin is the most effective in treating against all bacteria
-    genera as it has the lowest MIC. On the contrary, penicillin is the
-    least effective among all.
+-   From the first graph of all the bacteria types that have negative
+    gram, penicillin has the highest MIC values and is the least
+    effective, while neomycin has the lost MIC values and is the most
+    effective.
+-   From the second graph of all the bacteria types that have positive
+    gram, penicillin has the lowest MIC values most of the time while
+    neomycin has the lowest MIC values sometimes (less than penicillin).
+    Streptomycin has relatively higher values of MIC compared to the
+    other two types of antibiotics, so we can conclude that it is the
+    least effective.
+-   Generally speaking, the MIC values tend to be higher for a negative
+    gram.
 
 Which of your visuals above (1 through 5) is **most effective** at
 helping to answer this question?
 
--   Visual No.4.
+-   Visual 2.
 
 Why?
 
@@ -355,14 +380,14 @@ What is your response to the question above?
 Which of your visuals above (1 through 5) is **most effective** at
 helping to answer this question?
 
--   Visual No.3.
+-   Visual 4.
 
 Why?
 
--   It shows the difference of the effectiveness of the antibiotics in
-    color, and the bars representing Diplococcus pneumoniae,
-    Streptococcus hemolyticus and Streptococcus viridans stand out among
-    the bars of all the other bacteria types.
+-   According to Visual 4, *Diplococcus pneumoniae* is located very
+    close to *Streptococcus viridans* and *Streptococcus hemolycitus*,
+    which means their MIC values of streptomycin and penicillin are both
+    pretty similar.
 
 # References
 
