@@ -26,7 +26,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|--------------|----------------------------|-------------------------------|
+|-----------------|--------------------------|-----------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -174,7 +174,7 @@ ggplot(df_stang_long) +
 
 Note that the "amount of material" would vary with the thickness of a tested plate. Does the following graph support or contradict the claim that "elasticity `E` is an intensive material property." Why or why not? Is this evidence *conclusive* one way or another? Why or why not?\
 - The following graph contradicts with the claim that "elasticity E is an intensive material property," because the elasticity of the material increases as the amount of it increases.\
-- This evidence is not conclusive, because the total number of test being done for the experiment is not sufficient to make the conclusion significant enough.
+- This evidence is not conclusive. Although the existing data shows that the conclusion the elasticity of the material increases as the amount of it increases" is correct, we need more data points taken from a wider range to make the statement conclusive, i.e. we need a wider range of thickness as well as smaller intervals between every two adjacent thickness values. For each thickness, ideally we should have more data points (e.g. at least 10).
 
 ```{r q4-vis}
 ## NOTE: No need to change; run this chunk

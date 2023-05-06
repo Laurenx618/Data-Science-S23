@@ -3,38 +3,30 @@ Aluminum Data
 (Your name here)
 2020-
 
-- <a href="#grading-rubric" id="toc-grading-rubric">Grading Rubric</a>
-  - <a href="#individual" id="toc-individual">Individual</a>
-  - <a href="#due-date" id="toc-due-date">Due Date</a>
-- <a href="#loading-and-wrangle" id="toc-loading-and-wrangle">Loading and
-  Wrangle</a>
-  - <a
-    href="#q1-tidy-df_stang-to-produce-df_stang_long-you-should-have-column-names-thick-alloy-angle-e-nu-make-sure-the-angle-variable-is-of-correct-type-filter-out-any-invalid-values"
-    id="toc-q1-tidy-df_stang-to-produce-df_stang_long-you-should-have-column-names-thick-alloy-angle-e-nu-make-sure-the-angle-variable-is-of-correct-type-filter-out-any-invalid-values"><strong>q1</strong>
-    Tidy <code>df_stang</code> to produce <code>df_stang_long</code>. You
-    should have column names <code>thick, alloy, angle, E, nu</code>. Make
-    sure the <code>angle</code> variable is of correct type. Filter out any
-    invalid values.</a>
-- <a href="#eda" id="toc-eda">EDA</a>
-  - <a href="#initial-checks" id="toc-initial-checks">Initial checks</a>
-    - <a
-      href="#q2-perform-a-basic-eda-on-the-aluminum-data-without-visualization-use-your-analysis-to-answer-the-questions-under-observations-below-in-addition-add-your-own-specific-question-that-youd-like-to-answer-about-the-datayoull-answer-it-below-in-q3"
-      id="toc-q2-perform-a-basic-eda-on-the-aluminum-data-without-visualization-use-your-analysis-to-answer-the-questions-under-observations-below-in-addition-add-your-own-specific-question-that-youd-like-to-answer-about-the-datayoull-answer-it-below-in-q3"><strong>q2</strong>
-      Perform a basic EDA on the aluminum data <em>without visualization</em>.
-      Use your analysis to answer the questions under <em>observations</em>
-      below. In addition, add your own <em>specific</em> question that you’d
-      like to answer about the data—you’ll answer it below in q3.</a>
-  - <a href="#visualize" id="toc-visualize">Visualize</a>
-    - <a
-      href="#q3-create-a-visualization-to-investigate-your-question-from-q2-above-can-you-find-an-answer-to-your-question-using-the-dataset-would-you-need-additional-information-to-answer-your-question"
-      id="toc-q3-create-a-visualization-to-investigate-your-question-from-q2-above-can-you-find-an-answer-to-your-question-using-the-dataset-would-you-need-additional-information-to-answer-your-question"><strong>q3</strong>
-      Create a visualization to investigate your question from q2 above. Can
-      you find an answer to your question using the dataset? Would you need
-      additional information to answer your question?</a>
-    - <a href="#q4-consider-the-following-statement"
-      id="toc-q4-consider-the-following-statement"><strong>q4</strong>
-      Consider the following statement:</a>
-- <a href="#references" id="toc-references">References</a>
+- [Grading Rubric](#grading-rubric)
+  - [Individual](#individual)
+  - [Due Date](#due-date)
+- [Loading and Wrangle](#loading-and-wrangle)
+  - [**q1** Tidy `df_stang` to produce `df_stang_long`. You should have
+    column names `thick, alloy, angle, E, nu`. Make sure the `angle`
+    variable is of correct type. Filter out any invalid
+    values.](#q1-tidy-df_stang-to-produce-df_stang_long-you-should-have-column-names-thick-alloy-angle-e-nu-make-sure-the-angle-variable-is-of-correct-type-filter-out-any-invalid-values)
+- [EDA](#eda)
+  - [Initial checks](#initial-checks)
+    - [**q2** Perform a basic EDA on the aluminum data *without
+      visualization*. Use your analysis to answer the questions under
+      *observations* below. In addition, add your own *specific*
+      question that you’d like to answer about the data—you’ll answer it
+      below in
+      q3.](#q2-perform-a-basic-eda-on-the-aluminum-data-without-visualization-use-your-analysis-to-answer-the-questions-under-observations-below-in-addition-add-your-own-specific-question-that-youd-like-to-answer-about-the-datayoull-answer-it-below-in-q3)
+  - [Visualize](#visualize)
+    - [**q3** Create a visualization to investigate your question from
+      q2 above. Can you find an answer to your question using the
+      dataset? Would you need additional information to answer your
+      question?](#q3-create-a-visualization-to-investigate-your-question-from-q2-above-can-you-find-an-answer-to-your-question-using-the-dataset-would-you-need-additional-information-to-answer-your-question)
+    - [**q4** Consider the following
+      statement:](#q4-consider-the-following-statement)
+- [References](#references)
 
 *Purpose*: When designing structures such as bridges, boats, and planes,
 the design team needs data about *material properties*. Often when we
@@ -83,14 +75,24 @@ for more information.
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-    ## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
-    ## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-    ## ✔ readr   2.1.2     ✔ forcats 0.5.1
+    ## Warning: package 'tidyverse' was built under R version 4.2.3
+
+    ## Warning: package 'ggplot2' was built under R version 4.2.3
+
+    ## Warning: package 'stringr' was built under R version 4.2.3
+
+    ## Warning: package 'forcats' was built under R version 4.2.3
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.0.9     ✔ readr     2.1.2
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+    ## ✔ ggplot2   3.4.2     ✔ tibble    3.1.8
+    ## ✔ lubridate 1.8.0     ✔ tidyr     1.2.0
+    ## ✔ purrr     0.3.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
 
 *Background*: In 1946, scientists at the Bureau of Standards tested a
 number of Aluminum plates to determine their
@@ -196,8 +198,7 @@ df_stang_long
     ##  8 0.032 al_24st    45 10400 0.318
     ##  9 0.032 al_24st    90 10300 0.322
     ## 10 0.032 al_24st     0 10300 0.319
-    ## # … with 16 more rows
-    ## # ℹ Use `print(n = ...)` to see more rows
+    ## # ℹ 16 more rows
 
 Use the following tests to check your work.
 
@@ -323,9 +324,13 @@ Is this evidence *conclusive* one way or another? Why or why not?
 - The following graph contradicts with the claim that “elasticity E is
 an intensive material property,” because the elasticity of the material
 increases as the amount of it increases.  
-- This evidence is not conclusive, because the total number of test
-being done for the experiment is not sufficient to make the conclusion
-significant enough.
+- This evidence is not conclusive. Although the existing data shows that
+the conclusion the elasticity of the material increases as the amount of
+it increases” is correct, we need more data points taken from a wider
+range to make the statement conclusive, i.e. we need a wider range of
+thickness as well as smaller intervals between every two adjacent
+thickness values. For each thickness, ideally we should have more data
+points (e.g. at least 10).
 
 ``` r
 ## NOTE: No need to change; run this chunk
