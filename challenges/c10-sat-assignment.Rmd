@@ -51,7 +51,7 @@ define how you will be graded, both on an individual and team basis.
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------|-------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -153,12 +153,12 @@ df_q2 <- df_sat %>%
   mutate(both_SAT = math_SAT + verb_SAT)
 
 
-coef <- 0.0025
+coef <- 0.00251
 
 df_q2 %>%
   ggplot(aes(y = univ_GPA)) + 
-    geom_line(aes(x = both_SAT), color = "red") +
-    geom_line(aes(x = high_GPA/coef), color = "blue") +
+    geom_point(aes(x = both_SAT), color = "blue") +
+    geom_point(aes(x = high_GPA/coef), color = "red") +
     
     # Custom the Y scales:
     scale_x_continuous(
@@ -179,9 +179,17 @@ df_q2 %>%
 **Observations**:
 
 -   What relationship do `univ_GPA` and `both_SAT` exhibit?
-    -   univ_GPA increases as both_SAT increases.
+    -   `univ_GPA` increases as `both_SAT` increases. However, the
+        points between `both_SAT = 1000` and `both_SAT = 1200` are
+        generally aligned vertically, while the points between
+        `both_SAT = 1200` and `both_SAT = 1400` are generally aligned
+        horizontally.
 -   What relationship do `univ_GPA` and `high_GPA` exhibit?
-    -   univ_GPA increases as high_SAT increases.
+    -   `univ_GPA` increases as `high_SAT` increases. For a `high_GPA`
+        ranged between 2.0 and 2.75, the trend is not sufficiently
+        distinct. However, the relationship between `univ_GPA` and
+        `both_SAT` tends to look much more linear with a positive slope
+        when `both_SAT` is ranged from 2.75 to 4.0.
 
 ### Hypothesis Testing with a Correlation Coefficient
 
@@ -220,15 +228,18 @@ p1 + p2 + p3
 **Observations**:
 
 -   To what extent does `both_SAT` look like a normal distribution?
-    -   It has a overall shape that looks similar to a normal
-        distribution, except that the count is pretty low when both_SAT
-        is at roughly 1150, 1300 and 1400.
+    -   It barely looks similar to a normal distribution, since there
+        are missing data at the positions where it should be "peaks".
+        The entire data seems to be centered at 1150 but not quite.
 -   To what extent does `high_GPA` look like a normal distribution?
-    -   It has a overall shape that looks similar to a normal
-        distribution, except that the count is pretty low when high_GPA
-        is at roughly 3.0.
+    -   It barely looks similar to a normal distribution, since there
+        are missing data at roughly `high_GPA = 3.0`. The entire data
+        seems to have two centers at 2.75 and 3.5 respectively.
 -   To what extent does `univ_GPA` look like a normal distribution?
-    -   The portion from 2.6 to 3.8 looks like a normal distribution.
+    -   It barely looks similar to a normal distribution, since most of
+        the data points seem to center at 3.5 while there are several
+        spikes roughly located at `univ_GPA = 2.3` which differentiate
+        the pattern further away from normal distribution.
 
 Keep in mind your findings as you complete q4.
 
@@ -241,8 +252,8 @@ Keep in mind your findings as you complete q4.
 corr_high_univ_GPA <- cor.test(df_q2$high_GPA, df_q2$univ_GPA)
 corr_SAT_univ_GPA <- cor.test(df_q2$both_SAT, df_q2$univ_GPA)
 
-corr_high_univ_GPA
-corr_SAT_univ_GPA
+corr_high_univ_GPA %>% tidy()
+corr_SAT_univ_GPA %>% tidy()
 ```
 
 **Observations**:
@@ -264,31 +275,45 @@ corr_SAT_univ_GPA
 Finally, let's use the bootstrap to perform the same test using
 *different* assumptions.
 
-### **q5** Use the bootstrap to approximate a confidence interval for `corr[high_GPA, univ_GPA`. Compare your results---both the estimate and confidence interval---to your results from q4.
+### **q5** Use the bootstrap to approximate a confidence interval.
+
+Use the bootstrap to approximate a confidence interval for
+`cor[high_GPA, univ_GPA]`. Compare your results---both the estimate and
+confidence interval---to your results from q4.
+
+*Hint 1*. The `cor(x, y)` function computes the correlation between two
+variables `x` and `y`. You may find this more helpful than the
+`cor.test()` function we used above.
+
+*Hint 2*. You'll find that the documentation for `int_pctl` has some
+**really** useful examples for this task!
 
 ```{r q5-task}
-## TODO: Use the bootstrap to compute a confidence interval for corr[high_GPA, univ_GPA]
-tibble(x = rnorm(n = 100)) %>%
-  filter(x < 0) %>%
-
-  bootstraps(times = 1000) %>%
-  mutate(
-    estimates = map(
-      splits,
-      ~ analysis(.x) %>% pull(x) %>% 
-        MASS::fitdistr(densfun = "normal") %>% tidy()
+## TODO: Complete the following helper function to do a bootstrap analysis
+corr_high_GPA <- function(split) {
+  tibble(
+    term = "cor",
+    estimate = cor(analysis(split) %>% pull(high_GPA), 
+                   analysis(split) %>% pull(univ_GPA)
     )
-  ) %>%
-  int_pctl(estimates)
+  )
+}
 
+# Use the bootstrap to approximate a CI
+df_composite %>%
+  bootstraps(times = 1000) %>%
+  mutate(estimates = map(splits, corr_high_GPA)) %>%
+  int_pctl(estimates)
 ```
 
 **Observations**:
 
 -   How does your estimate from q5 compare with your estimate from q4?
-    -   (Your response here)
+    -   The estimate from q5 is 0.782, which is about 0.1 greater than
+        the result from q4 (0.685).
 -   How does your CI from q5 compare with your CI from q4?
-    -   (Your response here)
+    -   The CI from q5 is from 0.698 to 0.849, which is overall higher
+        than the result from q4 (from 0.567 to 0.775).
 
 *Aside*: When you use two different approximations to compute the same
 quantity and get similar results, that's an *encouraging sign*. Such an
@@ -351,7 +376,12 @@ tools rather than do it by hand.
 
 ```{r q6-task}
 ## TODO: Fit a model of univ_GPA on the predictor both_SAT
-fit_basic <- NA
+fit_basic <- 
+  df_q2 %>%
+  lm(
+    data = .,
+    formula = univ_GPA ~ both_SAT
+  )
 
 ## NOTE: The following computes confidence intervals on regression coefficients
 fit_basic %>%
@@ -359,15 +389,20 @@ fit_basic %>%
     conf.int = TRUE,
     conf.level = 0.99
   )
+rsquare(fit_basic, df_validate)
+
 ```
 
 **Observations**:
 
 -   What is the confidence interval on the coefficient of `both_SAT`? Is
     this coefficient significantly different from zero?
-    -   (Your response here)
+    -   The CI on the coefficient of `both_SAT` is from 0.00198 to
+        0.00349, which doesn't contain zero and the coefficient is
+        significantly different from zero.
 -   By itself, how well does `both_SAT` predict `univ_GPA`?
-    -   (Your response here)
+    -   `both_SAT` is a fair but not great predictor of `univ_GPA` with
+        an rsquare value of 0.554.
 
 Remember from `e-model03-interp-warnings` that there are challenges with
 interpreting regression coefficients! Let's investigate that idea
@@ -377,6 +412,35 @@ further.
 
 ```{r q7-task}
 ## TODO: Fit and assess models with predictors both_SAT + high_GPA, and high_GPA alone
+fit_both <-
+  df_q2 %>%
+  lm(
+    data = .,
+    formula = univ_GPA ~ both_SAT + high_GPA
+  )
+
+fit_both %>%
+  tidy(
+    conf.int = TRUE,
+    conf.level = 0.99
+  )
+
+fit_high_GPA <-
+  df_q2 %>%
+  lm(
+    data = .,
+    formula = univ_GPA ~ high_GPA
+  )
+
+fit_high_GPA %>%
+  tidy(
+    conf.int = TRUE,
+    conf.level = 0.99
+  )
+
+rsquare(fit_both, df_validate)
+rsquare(fit_high_GPA, df_validate)
+
 univ_GPA_prediction <- cor.test(df_q2$both_SAT, df_q2$univ_GPA)
 ```
 
@@ -384,13 +448,17 @@ univ_GPA_prediction <- cor.test(df_q2$both_SAT, df_q2$univ_GPA)
 
 -   How well do these models perform, compared to the one you built in
     q6?
-    -   (Your response here)
+    -   These models overall perform significantly better than the one
+        in q6.
 -   What is the confidence interval on the coefficient of `both_SAT`
     when including `high_GPA` as a predictor?? Is this coefficient
     significantly different from zero?
-    -   (Your response here)
+    -   The CI on the coefficient of `both_SAT` when including
+        `high_GPA` is from -0.00022 to 0.00181, which contains zero and
+        the coefficient is not significantly different from zero.
 -   How do the hypothesis test results compare with the results in q6?
-    -   (Your response here)
+    -   The rsquare values are higher than the results in q6, indicating
+        better hypothesis test results.
 
 ## Synthesize
 
@@ -404,12 +472,20 @@ Before closing, let's synthesize a bit from the analyses above.
 
 -   Between `both_SAT` and `high_GPA`, which single variable would you
     choose to predict `univ_GPA`? Why?
-    -   High school GPA, because it has a significantly higher
-        correlation to the university GPA.
+    -   `high_GPA`, because it has a significantly higher correlation to
+        the university GPA with a higher rsquare value than `both_SAT`.
 -   Is `both_SAT` an effective predictor of `univ_GPA`? What specific
     pieces of evidence do you have in favor of `both_SAT` being
     effective? What specific pieces of evidence do you have against?
-    -   (Your response here)
+    -   `both_SAT` is a fair but not sufficiently effective predictor of
+        `univ_GPA`. The lower bound of CI of `both_SAT` is above zero
+        and the coefficient is different from zero, while that of the
+        model fitted by both `both_SAT` and `high_GPA` has a CI lower
+        bound that's smaller than zero. This evidence is in favor of
+        `both_SAT` being effective.
+    -   The rsquare values of `both_SAT` are lower than that of
+        `high_GPA` or a combination of `high_GPA` and `both_SAT`, which
+        proves against `both_SAT` being more effective than others.
 
 # End Notes
 
