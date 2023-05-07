@@ -256,7 +256,7 @@ of fluid, for different experimental settings (e.g. different dimensions
 ##       each identified by different values of idx
 df_psaap %>%
   ggplot(aes(x = x, y = T_norm, color = idx)) + 
-    geom_point()
+    geom_line(aes(group = idx))
 ```
 
 ![](c11-psaap-assignment_files/figure-gfm/q2-task-1.png)<!-- -->
@@ -397,17 +397,18 @@ df_train %>%
 **Observations**:
 
 - Which model is *most accurate*? Which is *least accurate*?
-  - The cheat model (with variable “avg_T”) is the most accurate, and
-    the nonphysical model (with variable “idx” is the least accurate.
+  - The cheat model (with variable `avg_T`) is the most accurate, and
+    the nonphysical model (with variable `idx` is the least accurate.
 - What *Category* of variable is `avg_T`? Why is it such an effective
   predictor?
-  - avg_T is one of the outputs of the data set, which is in the same
+  - `avg_T` is one of the outputs of the data set, which is in the same
     category as T_norm.
 - Would we have access to `avg_T` if we were trying to predict a *new*
   value of `T_norm`? Is `avg_T` a valid predictor?
-  - Yes, we would, and avg_T is a valid predictor because not only is it
-    in the same parameter category as T_norm but its general pattern
-    also lines up with T_norm very well.
+  - No, we would not. This is because `avg_T`, just like `T_norm`, is
+    categorized as the result of the data set, and therefore we would
+    not have the access of it to make predictions about the variable of
+    the same category.
 - What *Category* of variable is `idx`? Does it have any physical
   meaning?
   - idx is the metadata of the data set, and it refers to the simulation
@@ -419,18 +420,18 @@ df_train %>%
 ## TODO: Fit a model for T_norm using only *principled* predictors, try to
 ##       optimize your validation error.
 fit_q4 <- df_train %>% 
-  lm(formula = T_norm ~ rms_T)
+  lm(formula = T_norm ~ L)
 
 df_train %>%
   add_predictions(
     model = fit_q4,
-    var = "rms_T"
+    var = "L"
   ) %>%
 
-  ggplot(aes(rms_T, T_norm)) +
+  ggplot(aes(L, T_norm)) +
   geom_point() +
   geom_line(
-    aes(y = rms_T),
+    aes(y = L),
     linetype = 2,
     color = "salmon"
   )
@@ -442,7 +443,7 @@ df_train %>%
 mse(fit_q4, df_train)
 ```
 
-    ## [1] 0.1847466
+    ## [1] 0.2199783
 
 ``` r
 ## NOTE: No need to change these error calculations; use them to
@@ -450,18 +451,23 @@ mse(fit_q4, df_train)
 rsquare(fit_q4, df_train)
 ```
 
-    ## [1] 0.2055552
+    ## [1] 0.05405259
 
 ``` r
 rsquare(fit_q4, df_validate)
 ```
 
-    ## [1] 0.08079805
+    ## [1] 0.06779214
+
+``` r
+# L, rho_f
+```
 
 **Observations**:
 
-- rms_T seems to be a fairly effective predictor with a mean squared
-  error of 0.185.
+- `L` seems to be a fairly effective predictor with a mean squared error
+  of 0.22. Its `rsquare` value is 0.054, which is close to that of
+  `df_validate` (0.067).
 - *Note*: You don’t just have to fiddle with `formula`! Remember that
   you have a whole toolkit of *EDA* tools
 
@@ -621,7 +627,9 @@ bind_rows(
     intervals and thus is more confident.
 - How many predictors does the `fit_simple` model need in order to make
   a prediction? What about your model `fit_q4`?
-  - (Your response here)
+  - `fit_simple` used `x` as the only predictor to make the prediction,
+    and my model `fit_q4` used `L` as the only predictor to make the
+    prediction.
 
 Based on these results, you might be tempted to always throw every
 reasonable variable into the model. For some cases, that might be the
@@ -683,7 +691,7 @@ pr_level <- 0.8
 #        use the validation data to check your uncertainty estimates, and 
 #        make a recommendation on a *dependable range* of values for T_norm
 #        at the point `df_design`
-fit_q6 <- fit_q4 <- df_train %>% 
+fit_q6 <- df_train %>% 
   lm(formula = T_norm ~ U_0)
 
 df_train %>%
@@ -723,10 +731,44 @@ rsquare(fit_q6, df_validate)
 
     ## [1] 0.05886415
 
+``` r
+df_validate %>%
+  add_uncertainties(
+    fit_q6, 
+    interval = "prediction", 
+    prefix = "pi", 
+    level = pr_level
+  ) %>%
+  select(T_norm, pi_lwr, pi_upr) %>%
+  summarize(
+    fraction = mean(T_norm > pi_lwr & T_norm < pi_upr)
+  )
+```
+
+    ## # A tibble: 1 × 1
+    ##   fraction
+    ##      <dbl>
+    ## 1      0.9
+
+``` r
+df_design %>%
+  add_uncertainties(
+    fit_q6, 
+    interval = "prediction", 
+    prefix = "pi", 
+    level = pr_level
+  )
+```
+
+    ## # A tibble: 1 × 7
+    ##       x     L     W   U_0 pi_fit pi_lwr pi_upr
+    ##   <dbl> <dbl> <dbl> <dbl>  <dbl>  <dbl>  <dbl>
+    ## 1     1   0.2  0.04     1   1.36  0.701   2.02
+
 **Recommendation**:
 
 - How much do you trust your model? Why?
-  - Not so much, because 1) 140 data points are not too limit but are
+  - Not so much, because 1) 140 data points are not too limited but are
     also not too much for a definitive conclusion.
 - What kind of interval—confidence or prediction—would you use for this
   task, and why?
@@ -735,12 +777,14 @@ rsquare(fit_q6, df_validate)
     looking for the range of mean doesn’t necessarily serve the need.
 - What fraction of validation cases lie within the interval you predict?
   How does this compare with `pr_level`?
-  - (Your response here)
+  - 0.9 of validation cases lie within the interval I predicted, and
+    this is 0.1 higher compared to `pr_level`.
 - What interval for `T_norm` would you recommend the design team to plan
   around?
-  - (Your response here)
+  - I would recommend the design team to aim for an interval between
+    0.7011803 and 2.021301.
 - Are there any other recommendations you would provide?
-  - (Your response here)
+  - No.
 
 *Bonus*: One way you could take this analysis further is to recommend
 which other variables the design team should tightly control. You could
