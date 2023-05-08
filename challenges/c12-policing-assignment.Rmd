@@ -22,7 +22,7 @@ Unlike exercises, **challenges will be graded**. The following rubrics define ho
 <!-- ------------------------- -->
 
 | Category    | Needs Improvement                                                                                                | Satisfactory                                                                                                               |
-|------------------|-----------------------------|-------------------------|
+|-------------|------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | Effort      | Some task **q**'s left unattempted                                                                               | All task **q**'s attempted                                                                                                 |
 | Observed    | Did not document observations, or observations incorrect                                                         | Documented correct observations based on analysis                                                                          |
 | Supported   | Some observations not clearly supported by analysis                                                              | All observations clearly supported by analysis (table, graph, etc.)                                                        |
@@ -95,7 +95,7 @@ df_data %>%
 -   What is the overlap between the two sets?
     -   "Black", "White", "Hispanic", and "Asian or Pacific Islander".
 -   What is the difference between the two sets?
-    -   `subject_race` describes "Middle Eastern or East Indian (South Asian)" and "American Indian or Alaskan Native" in `raw_Race` as "others, and it also describes NA, "None - for no operator present citations only", and "A" in `raw_Race` as "unknown".
+    -   `subject_race` describes "Middle Eastern or East Indian (South Asian)" and "American Indian or Alaskan Native" in `raw_Race` as "others, and it also describes NA,"None - for no operator present citations only", and "A" in `raw_Race` as "unknown".
 
 ### **q4** Check whether `subject_race` and `raw_Race` match for a large fraction of cases. Which of the two hypotheses above is most likely, based on your results?
 
@@ -168,7 +168,8 @@ df_q5_1 %>%
       x = subject_race, 
       y = arrest_rate, 
       fill = subject_sex
-    )
+    ),
+    position = position_dodge()
   ) + 
   guides(x =  guide_axis(angle = 90))
 ```
@@ -260,7 +261,8 @@ df_q8 <- df_data
 
 fit_q8 <- glm(
     formula = 
-      contraband_found ~ 
+      arrest_made ~ 
+      contraband_found +
       contraband_alcohol + 
       contraband_drugs + 
       contraband_weapons +
@@ -280,17 +282,36 @@ fit_q8 %>% tidy()
 
 -   How does controlling for found contraband affect the `subject_race` terms in the model?
 
-    -   Contraband presence has pretty big standard error overall, so it doesn't affect the `subject_race` by very much.
+    -   `Contraband_found` has a pretty small `estimate`, so it doesn't serve as an effective predictor.
 
     What does the *finding of contraband* tell us about the stop? What does it *not* tell us about the stop?
 
-    -   Drugs are one of the most commonly object that presents in the vehicle, but it doesn't tell us about other potential reasons of the stop, e.g. speed limit of the specific area.
+    -   Alcohol and other contrabands have among the highest rate of presence in the vehicle, but it doesn't tell us about other potential reasons of the stop, e.g. if the driver has consumed any alcohol or drugs during the time they are driving.
 
 ### **q9** Go deeper: Pose at least one more question about the data and fit at least one more model in support of answering that question.
 
+Question: Is performing frisks actually helpful? Are countrabands usually found from the frisk performed subjects?
+
+```{r q9-task}
+df_q9 <- df_data
+fit_q9 <- glm(
+    formula = 
+      contraband_found ~ 
+      frisk_performed,
+    data = df_q9 %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic", "asian/pacific islander", "other", "unknown")
+      ),
+    family = "binomial"
+  )
+
+fit_q9 %>% tidy()
+```
+
 **Observations**:
 
--   Document your question and findings
+-   The correlation between frisk_performed = TRUE and countraband_found = TRUE is negative, indicating that performing frisks isn't necessarily effective.
 
 ## Further Reading
 

@@ -305,7 +305,8 @@ df_q5_1 %>%
       x = subject_race, 
       y = arrest_rate, 
       fill = subject_sex
-    )
+    ),
+    position = position_dodge()
   ) + 
   guides(x =  guide_axis(angle = 90))
 ```
@@ -455,7 +456,8 @@ df_q8 <- df_data
 
 fit_q8 <- glm(
     formula = 
-      contraband_found ~ 
+      arrest_made ~ 
+      contraband_found +
       contraband_alcohol + 
       contraband_drugs + 
       contraband_weapons +
@@ -467,45 +469,69 @@ fit_q8 <- glm(
       ),
     family = "binomial"
   )
-```
 
-    ## Warning: glm.fit: algorithm did not converge
-
-    ## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-
-``` r
 fit_q8 %>% tidy()
 ```
 
-    ## # A tibble: 5 × 5
-    ##   term                   estimate std.error statistic p.value
-    ##   <chr>                     <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 (Intercept)               -26.1     1691.   -0.0154   0.988
-    ## 2 contraband_alcoholTRUE     51.7     3570.    0.0145   0.988
-    ## 3 contraband_drugsTRUE       52.0     2721.    0.0191   0.985
-    ## 4 contraband_weaponsTRUE     50.8     5064.    0.0100   0.992
-    ## 5 contraband_otherTRUE       51.1     4135.    0.0124   0.990
+    ## # A tibble: 6 × 5
+    ##   term                   estimate std.error statistic  p.value
+    ##   <chr>                     <dbl>     <dbl>     <dbl>    <dbl>
+    ## 1 (Intercept)             -1.00      0.0134    -74.7  0       
+    ## 2 contraband_foundTRUE     0.0566    0.0412      1.37 1.70e- 1
+    ## 3 contraband_alcoholTRUE   0.574     0.0378     15.2  4.21e-52
+    ## 4 contraband_drugsTRUE     0.310     0.0365      8.48 2.22e-17
+    ## 5 contraband_weaponsTRUE   0.221     0.0445      4.97 6.78e- 7
+    ## 6 contraband_otherTRUE     0.592     0.0382     15.5  3.90e-54
 
 **Observations**:
 
 - How does controlling for found contraband affect the `subject_race`
   terms in the model?
 
-  - Contraband presence has pretty big standard error overall, so it
-    doesn’t affect the `subject_race` by very much.
+  - `Contraband_found` has a pretty small `estimate`, so it doesn’t
+    serve as an effective predictor.
 
   What does the *finding of contraband* tell us about the stop? What
   does it *not* tell us about the stop?
 
-  - Drugs are one of the most commonly object that presents in the
-    vehicle, but it doesn’t tell us about other potential reasons of the
-    stop, e.g. speed limit of the specific area.
+  - Alcohol and other contrabands have among the highest rate of
+    presence in the vehicle, but it doesn’t tell us about other
+    potential reasons of the stop, e.g. if the driver has consumed any
+    alcohol or drugs during the time they are driving.
 
 ### **q9** Go deeper: Pose at least one more question about the data and fit at least one more model in support of answering that question.
 
+Question: Is performing frisks actually helpful? Are countrabands
+usually found from the frisk performed subjects?
+
+``` r
+df_q9 <- df_data
+fit_q9 <- glm(
+    formula = 
+      contraband_found ~ 
+      frisk_performed,
+    data = df_q9 %>%
+      filter(
+        !is.na(arrest_made),
+        subject_race %in% c("white", "black", "hispanic", "asian/pacific islander", "other", "unknown")
+      ),
+    family = "binomial"
+  )
+
+fit_q9 %>% tidy()
+```
+
+    ## # A tibble: 2 × 5
+    ##   term                estimate std.error statistic  p.value
+    ##   <chr>                  <dbl>     <dbl>     <dbl>    <dbl>
+    ## 1 (Intercept)           0.0282   0.00886      3.18 1.45e- 3
+    ## 2 frisk_performedTRUE  -0.263    0.0385      -6.84 8.16e-12
+
 **Observations**:
 
-- Document your question and findings
+- The correlation between frisk_performed = TRUE and countraband_found =
+  TRUE is negative, indicating that performing frisks isn’t necessarily
+  effective.
 
 ## Further Reading
 
